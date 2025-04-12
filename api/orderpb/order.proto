@@ -10,7 +10,6 @@ service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (google.protobuf.Empty);
   rpc GetOrder(GetOrderRequest) returns(Order);
   rpc UpdateOrder(Order) returns(google.protobuf.Empty);
-
 }
 
 message CreateOrderRequest {
