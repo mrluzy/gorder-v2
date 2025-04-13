@@ -8,23 +8,23 @@ import "google/protobuf/empty.proto";
 
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (google.protobuf.Empty);
-  rpc GetOrder(GetOrderRequest) returns(Order);
-  rpc UpdateOrder(Order) returns(google.protobuf.Empty);
+  rpc GetOrder(GetOrderRequest) returns (Order);
+  rpc UpdateOrder(Order) returns (google.protobuf.Empty);
 }
 
 message CreateOrderRequest {
-  string CustomerId = 1;
-  repeated ItemWithQuantity Item= 2;
-}
-
-message ItemWithQuantity {
-  string ID = 1;
-  int32 Quantity = 2;
+  string CustomerID = 1;
+  repeated ItemWithQuantity Items = 2;
 }
 
 message GetOrderRequest {
   string OrderID = 1;
   string CustomerID = 2;
+}
+
+message ItemWithQuantity {
+  string ID = 1;
+  int32 Quantity = 2;
 }
 
 message Item {
@@ -39,4 +39,5 @@ message Order {
   string CustomerID = 2;
   string Status = 3;
   repeated Item Items = 4;
+  string PaymentLink = 5;
 }
