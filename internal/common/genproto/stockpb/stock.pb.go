@@ -24,7 +24,7 @@ const (
 
 type GetItemsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ItemIDS       []string               `protobuf:"bytes,1,rep,name=ItemIDS,proto3" json:"ItemIDS,omitempty"`
+	ItemIDs       []string               `protobuf:"bytes,1,rep,name=ItemIDs,proto3" json:"ItemIDs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -59,9 +59,9 @@ func (*GetItemsRequest) Descriptor() ([]byte, []int) {
 	return file_stockpb_stock_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *GetItemsRequest) GetItemIDS() []string {
+func (x *GetItemsRequest) GetItemIDs() []string {
 	if x != nil {
-		return x.ItemIDS
+		return x.ItemIDs
 	}
 	return nil
 }
@@ -212,7 +212,7 @@ const file_stockpb_stock_proto_rawDesc = "" +
 	"\n" +
 	"\x13stockpb/stock.proto\x12\astockpb\x1a\x13orderpb/order.proto\"+\n" +
 	"\x0fGetItemsRequest\x12\x18\n" +
-	"\aItemIDS\x18\x01 \x03(\tR\aItemIDS\"7\n" +
+	"\aItemIDs\x18\x01 \x03(\tR\aItemIDs\"7\n" +
 	"\x10GetItemsResponse\x12#\n" +
 	"\x05Items\x18\x01 \x03(\v2\r.orderpb.ItemR\x05Items\"M\n" +
 	"\x1aCheckIfItemsInStockRequest\x12/\n" +

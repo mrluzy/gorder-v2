@@ -1,8 +1,12 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/mrluzy/gorder-v2/order/app"
+)
 
 type HttpServer struct {
+	app app.Application
 }
 
 func (h HttpServer) PostCustomerCustomerIDOrder(c *gin.Context, customerID string) {
