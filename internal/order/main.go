@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/mrluzy/gorder-v2/common/config"
+	"github.com/mrluzy/gorder-v2/common/discovery"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/common/server"
 	"github.com/mrluzy/gorder-v2/order/ports"
@@ -27,6 +28,14 @@ func main() {
 
 	application, cleanup := service.NewApplication(ctx)
 	defer cleanup()
+
+	deregisterFn, err := discovery.RegisterToConsul(ctx, serviceName)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer func() {
+		_ = deregisterFn()
+	}()
 
 	go server.RunGRPCServer(serviceName, func(server *grpc.Server) {
 		svc := ports.NewGRPCServer(application)
