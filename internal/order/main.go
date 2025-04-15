@@ -6,6 +6,7 @@ import (
 	"github.com/mrluzy/gorder-v2/common/config"
 	"github.com/mrluzy/gorder-v2/common/discovery"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
+	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/mrluzy/gorder-v2/common/server"
 	"github.com/mrluzy/gorder-v2/order/ports"
 	"github.com/mrluzy/gorder-v2/order/service"
@@ -15,12 +16,14 @@ import (
 )
 
 func init() {
+	logging.Init()
 	if err := config.NewViperConfig(); err != nil {
 		logrus.Fatal(err)
 	}
 }
 
 func main() {
+	//logrus.Fatal(viper.GetString("stripe-key"))
 	serviceName := viper.GetString("order.service-name")
 
 	ctx, cancel := context.WithCancel(context.Background())
