@@ -1,4 +1,4 @@
-package adaptors
+package adapters
 
 import (
 	"context"
@@ -15,6 +15,24 @@ type MemoryStockRepository struct {
 var stub = map[string]*orderpb.Item{
 	"item_id": {
 		ID:       "foo_item",
+		Name:     "stub item",
+		Quantity: 1000,
+		PriceID:  "stub_item_price_id",
+	},
+	"item1": {
+		ID:       "item1",
+		Name:     "stub item",
+		Quantity: 1000,
+		PriceID:  "stub_item_price_id",
+	},
+	"item2": {
+		ID:       "item2",
+		Name:     "stub item",
+		Quantity: 1000,
+		PriceID:  "stub_item_price_id",
+	},
+	"item3": {
+		ID:       "item3",
 		Name:     "stub item",
 		Quantity: 1000,
 		PriceID:  "stub_item_price_id",
