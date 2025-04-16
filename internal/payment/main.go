@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/mrluzy/gorder-v2/common/broker"
 	"github.com/mrluzy/gorder-v2/common/config"
 	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/mrluzy/gorder-v2/common/server"
+	"github.com/mrluzy/gorder-v2/payment/infrastructure/consumer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -18,6 +20,20 @@ func init() {
 func main() {
 	serverName := viper.GetString("payment.service-name")
 	serverType := viper.GetString("payment.server-to-run")
+
+	ch, closeCh := broker.Connect(
+		viper.GetString("rabbitmq.user"),
+		viper.GetString("rabbitmq.password"),
+		viper.GetString("rabbitmq.host"),
+		viper.GetString("rabbitmq.port"),
+	)
+
+	defer func() {
+		_ = ch.Close()
+		_ = closeCh()
+	}()
+
+	go consumer.NewConsumer().Listen(ch)
 
 	paymentHandler := NewPaymentHandler()
 
