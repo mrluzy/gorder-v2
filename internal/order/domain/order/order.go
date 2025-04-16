@@ -1,8 +1,8 @@
 package order
 
 import (
-	"fmt"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
+	"github.com/pkg/errors"
 )
 
 type Order struct {
@@ -13,10 +13,28 @@ type Order struct {
 	Items       []*orderpb.Item
 }
 
-type NotFoundError struct {
-	OrderID string
+func NewOrder(ID string, customerID string, status string, paymentLink string, items []*orderpb.Item) (*Order, error) {
+	if ID == "" {
+		return nil, errors.New("empty ID")
+	}
+	if customerID == "" {
+		return nil, errors.New("empty customerID")
+	}
+	if status == "" {
+		return nil, errors.New("empty status")
+	}
+	if items == nil {
+		return nil, errors.New("empty items")
+	}
+	return &Order{ID: ID, CustomerID: customerID, Status: status, PaymentLink: paymentLink, Items: items}, nil
 }
 
-func (e NotFoundError) Error() string {
-	return fmt.Sprintf("order '%s' not found", e.OrderID)
+func (o *Order) ToProto() *orderpb.Order {
+	return &orderpb.Order{
+		ID:          o.ID,
+		CustomerID:  o.CustomerID,
+		Status:      o.Status,
+		PaymentLink: o.PaymentLink,
+		Items:       o.Items,
+	}
 }

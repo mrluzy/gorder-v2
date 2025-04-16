@@ -1,6 +1,9 @@
 package order
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 type Repository interface {
 	Create(context.Context, *Order) (*Order, error)
@@ -10,4 +13,11 @@ type Repository interface {
 		o *Order,
 		UpdateFn func(context.Context, *Order) (*Order, error),
 	) error
+}
+type NotFoundError struct {
+	OrderID string
+}
+
+func (e NotFoundError) Error() string {
+	return fmt.Sprintf("order '%s' not found", e.OrderID)
 }
