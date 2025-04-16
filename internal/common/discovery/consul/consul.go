@@ -69,7 +69,7 @@ func (r Registry) Deregister(_ context.Context, instanceID, serviceName string) 
 	return r.client.Agent().ServiceDeregister(instanceID)
 }
 
-func (r Registry) Discover(ctx context.Context, serviceName string) ([]string, error) {
+func (r Registry) Discover(_ context.Context, serviceName string) ([]string, error) {
 	entries, _, err := r.client.Health().Service(serviceName, "", true, nil)
 	if err != nil {
 		return nil, err
@@ -81,6 +81,6 @@ func (r Registry) Discover(ctx context.Context, serviceName string) ([]string, e
 	return ids, nil
 }
 
-func (r Registry) HealthCheck(instanceID, serviceName string) error {
+func (r Registry) HealthCheck(instanceID, _ string) error {
 	return r.client.Agent().UpdateTTL(instanceID, "online", api.HealthPassing)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
 	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/mrluzy/gorder-v2/common/server"
+	"github.com/mrluzy/gorder-v2/payment/infrastructure/consumer"
 	"github.com/mrluzy/gorder-v2/stock/ports"
 	"github.com/mrluzy/gorder-v2/stock/service"
 	"github.com/sirupsen/logrus"
