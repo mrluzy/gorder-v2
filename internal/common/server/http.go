@@ -5,15 +5,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-func RunHttpServer(serverName string, wrapper func(router *gin.Engine)) {
+func RunHTTPServer(serverName string, wrapper func(router *gin.Engine)) {
 	addr := viper.Sub(serverName).GetString("http-addr")
 	if addr == "" {
-		// TODO:WARNING
+		panic("empty http address")
 	}
-	RunHttpServerOnAddr(addr, wrapper)
+	RunHTTPServerOnAddr(addr, wrapper)
 }
 
-func RunHttpServerOnAddr(addr string, wrapper func(router *gin.Engine)) {
+func RunHTTPServerOnAddr(addr string, wrapper func(router *gin.Engine)) {
 	apiRouter := gin.New()
 	wrapper(apiRouter)
 	apiRouter.Group("/api")

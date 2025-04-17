@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/order/app"
 	"github.com/mrluzy/gorder-v2/order/app/command"
@@ -50,7 +51,7 @@ func (G GRPCServer) UpdateOrder(ctx context.Context, request *orderpb.Order) (_ 
 	)
 	if err != nil {
 		err = status.Error(codes.Internal, err.Error())
-		return
+		return nil, err
 	}
 	_, err = G.app.Commands.UpdateOrder.Handle(ctx, command.UpdateOrder{
 		Order: order,
@@ -58,5 +59,5 @@ func (G GRPCServer) UpdateOrder(ctx context.Context, request *orderpb.Order) (_ 
 			return order, nil
 		},
 	})
-	return
+	return nil, err
 }

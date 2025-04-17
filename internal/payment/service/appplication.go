@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/metrics"
 	"github.com/spf13/viper"
 
@@ -19,20 +20,20 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 	if err != nil {
 		panic(err)
 	}
+	orderGRPC := adapters.NewOrderGRPC(orderClient)
 	//memoryProcessor := processor.NewInmemProcessor()
 	stripeProcessor := processor.NewStripeProcessor(viper.GetString("stripe-key"))
-	oderGRPC := adapters.NewOrderGRPC(orderClient)
-	return newApplication(ctx, oderGRPC, stripeProcessor), func() {
+	return newApplication(ctx, orderGRPC, stripeProcessor), func() {
 		_ = closeOrderClient()
 	}
 }
 
-func newApplication(_ context.Context, orderGRPC command.OrderService, procssor domain.Processor) app.Application {
+func newApplication(_ context.Context, orderGRPC command.OrderService, processor domain.Processor) app.Application {
 	logger := logrus.NewEntry(logrus.StandardLogger())
 	metricClient := metrics.TodoMetrics{}
 	return app.Application{
 		Commands: app.Commands{
-			CreatePayment: command.NewCreatePayment(procssor, orderGRPC, logger, metricClient),
+			CreatePayment: command.NewCreatePaymentHandler(processor, orderGRPC, logger, metricClient),
 		},
 	}
 }

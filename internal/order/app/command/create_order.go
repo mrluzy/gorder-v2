@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+
 	"github.com/mrluzy/gorder-v2/common/broker"
 	"github.com/mrluzy/gorder-v2/common/decorator"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
@@ -76,7 +77,7 @@ func (c createOrderHandler) Handle(ctx context.Context, cmd CreateOrder) (*Creat
 	if err != nil {
 		return nil, err
 	}
-	
+
 	marshalledOrder, err := json.Marshal(o)
 	if err != nil {
 		return nil, err

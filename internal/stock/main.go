@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/config"
 	"github.com/mrluzy/gorder-v2/common/discovery"
 	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"

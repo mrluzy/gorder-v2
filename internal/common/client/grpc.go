@@ -2,6 +2,10 @@ package client
 
 import (
 	"context"
+	"errors"
+	"net"
+	"time"
+
 	"github.com/mrluzy/gorder-v2/common/discovery"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
@@ -12,6 +16,9 @@ import (
 )
 
 func NewOrderGRPCClient(ctx context.Context) (client orderpb.OrderServiceClient, close func() error, err error) {
+	if !WaitForOrderGRPCClient(viper.GetDuration("dial-grpc-timeout") * time.Second) {
+		return nil, nil, errors.New("order grpc not available")
+	}
 	grpcAddr, err := discovery.GetServiceAddr(ctx, viper.GetString("order.service-name"))
 	if err != nil {
 		return nil, func() error { return nil }, err
@@ -20,10 +27,8 @@ func NewOrderGRPCClient(ctx context.Context) (client orderpb.OrderServiceClient,
 		logrus.Warnf("no order grpc address found")
 	}
 
-	opts, err := grpcDialOpts(grpcAddr)
-	if err != nil {
-		return nil, func() error { return nil }, err
-	}
+	opts := grpcDialOpts(grpcAddr)
+
 	conn, err := grpc.NewClient(grpcAddr, opts...)
 	if err != nil {
 		return nil, func() error { return nil }, err
@@ -32,7 +37,9 @@ func NewOrderGRPCClient(ctx context.Context) (client orderpb.OrderServiceClient,
 }
 
 func NewStockGRPCClient(ctx context.Context) (client stockpb.StockServiceClient, close func() error, err error) {
-	//grpcAddr := viper.GetString("stock.grpc-addr")
+	if !WaitForStockGRPCClient(viper.GetDuration("dial-grpc-timeout") * time.Second) {
+		return nil, nil, errors.New("stock grpc not available")
+	}
 	grpcAddr, err := discovery.GetServiceAddr(ctx, viper.GetString("stock.service-name"))
 	if err != nil {
 		return nil, func() error { return nil }, err
@@ -41,10 +48,8 @@ func NewStockGRPCClient(ctx context.Context) (client stockpb.StockServiceClient,
 		logrus.Warnf("no stock grpc address found")
 	}
 
-	opts, err := grpcDialOpts(grpcAddr)
-	if err != nil {
-		return nil, func() error { return nil }, err
-	}
+	opts := grpcDialOpts(grpcAddr)
+
 	conn, err := grpc.NewClient(grpcAddr, opts...)
 	if err != nil {
 		return nil, func() error { return nil }, err
@@ -52,8 +57,47 @@ func NewStockGRPCClient(ctx context.Context) (client stockpb.StockServiceClient,
 	return stockpb.NewStockServiceClient(conn), conn.Close, nil
 }
 
-func grpcDialOpts(addr string) ([]grpc.DialOption, error) {
+func grpcDialOpts(_ string) []grpc.DialOption {
 	return []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}, nil
+	}
+}
+
+func WaitForOrderGRPCClient(timeout time.Duration) bool {
+	logrus.Infof("waiting for order grpc client, timeout: %v seconds", timeout.Seconds())
+	return waitFor(viper.GetString("order.grpc-addr"), timeout)
+}
+
+func WaitForStockGRPCClient(timeout time.Duration) bool {
+	logrus.Infof("waiting for stock grpc client, timeout: %v seconds", timeout.Seconds())
+	return waitFor(viper.GetString("stock.grpc-addr"), timeout)
+}
+
+func waitFor(addr string, timeout time.Duration) bool {
+	portAvailable := make(chan struct{})
+	timeoutCh := time.After(timeout)
+
+	go func() {
+		for {
+			select {
+			case <-timeoutCh:
+				return
+			default:
+				// continue
+			}
+			_, err := net.Dial("tcp", addr)
+			if err == nil {
+				close(portAvailable)
+				return
+			}
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
+	select {
+	case <-portAvailable:
+		return true
+	case <-timeoutCh:
+		return false
+	}
 }

@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/decorator"
 	domain "github.com/mrluzy/gorder-v2/order/domain/order"
 	"github.com/sirupsen/logrus"
@@ -25,7 +26,7 @@ func NewUpdateOrderHandler(
 	metricClient decorator.MetricsClient,
 ) UpdateOrderHandler {
 	if orderRepo == nil {
-		panic("orderRepo is nil")
+		panic("nil orderRepo")
 	}
 	return decorator.ApplyCommandDecorators[UpdateOrder, interface{}](
 		updateOrderHandler{orderRepo: orderRepo},
@@ -36,13 +37,10 @@ func NewUpdateOrderHandler(
 
 func (c updateOrderHandler) Handle(ctx context.Context, cmd UpdateOrder) (interface{}, error) {
 	if cmd.UpdateFn == nil {
-		logrus.Warnf("updateOrder handler called with nil UpdateFn, order=%v", cmd.Order)
-		cmd.UpdateFn = func(_ context.Context, order *domain.Order) (*domain.Order, error) {
-			return order, nil
-		}
+		logrus.Warnf("updateOrderHandler got nil UpdateFn, order=%#v", cmd.Order)
+		cmd.UpdateFn = func(_ context.Context, order *domain.Order) (*domain.Order, error) { return order, nil }
 	}
-	err := c.orderRepo.Update(ctx, cmd.Order, cmd.UpdateFn)
-	if err != nil {
+	if err := c.orderRepo.Update(ctx, cmd.Order, cmd.UpdateFn); err != nil {
 		return nil, err
 	}
 	return nil, nil
