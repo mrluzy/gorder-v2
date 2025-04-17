@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/metrics"
 	"github.com/mrluzy/gorder-v2/stock/adapters"
 	"github.com/mrluzy/gorder-v2/stock/app"

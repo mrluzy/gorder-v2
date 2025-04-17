@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
 	"github.com/mrluzy/gorder-v2/stock/app"
 	"github.com/mrluzy/gorder-v2/stock/app/query"

@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/decorator"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/payment/domain"
@@ -24,7 +25,7 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 	if err != nil {
 		return "", err
 	}
-	logrus.Infof("create payment link for order: %s success, payment link:%s", cmd.Order.ID, link)
+	logrus.Infof("create payment link for order: %s success, payment link: %s", cmd.Order.ID, link)
 	newOrder := &orderpb.Order{
 		ID:          cmd.Order.ID,
 		CustomerID:  cmd.Order.CustomerID,
@@ -36,17 +37,14 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 	return link, err
 }
 
-func NewCreatePayment(
+func NewCreatePaymentHandler(
 	processor domain.Processor,
 	orderGRPC OrderService,
 	logger *logrus.Entry,
 	metricClient decorator.MetricsClient,
 ) CreatePaymentHandler {
 	return decorator.ApplyCommandDecorators[CreatePayment, string](
-		createPaymentHandler{
-			processor: processor,
-			orderGRPC: orderGRPC,
-		},
+		createPaymentHandler{processor: processor, orderGRPC: orderGRPC},
 		logger,
 		metricClient,
 	)

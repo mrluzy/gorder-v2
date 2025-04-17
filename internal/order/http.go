@@ -1,19 +1,21 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/order/app"
 	"github.com/mrluzy/gorder-v2/order/app/command"
 	"github.com/mrluzy/gorder-v2/order/app/query"
-	"net/http"
 )
 
-type HttpServer struct {
+type HTTPServer struct {
 	app app.Application
 }
 
-func (h HttpServer) PostCustomerCustomerIDOrder(c *gin.Context, customerID string) {
+func (h HTTPServer) PostCustomerCustomerIDOrder(c *gin.Context, customerID string) {
 	var req orderpb.CreateOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -27,10 +29,15 @@ func (h HttpServer) PostCustomerCustomerIDOrder(c *gin.Context, customerID strin
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"customer_id": req.CustomerID, "order_id": r.OrderID})
+	c.JSON(http.StatusOK, gin.H{
+		"message":      "success",
+		"customer_id":  req.CustomerID,
+		"order_id":     r.OrderID,
+		"redirect_url": fmt.Sprintf("http://localhost:8282/success?customerID=%s&orderID=%s", req.CustomerID, r.OrderID),
+	})
 }
 
-func (h HttpServer) GetCustomerCustomerIDOrderOrderID(c *gin.Context, customerID string, orderID string) {
+func (h HTTPServer) GetCustomerCustomerIDOrderOrderID(c *gin.Context, customerID string, orderID string) {
 	o, err := h.app.Queries.GetCustomerOrder.Handle(c, query.GetCustomerOrder{
 		CustomerID: customerID,
 		OrderID:    orderID,
@@ -39,5 +46,10 @@ func (h HttpServer) GetCustomerCustomerIDOrderOrderID(c *gin.Context, customerID
 		c.JSON(http.StatusOK, gin.H{"error": err})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": o})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"data": gin.H{
+			"Order": o,
+		},
+	})
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/mrluzy/gorder-v2/common/broker"
 	"github.com/mrluzy/gorder-v2/common/config"
 	"github.com/mrluzy/gorder-v2/common/logging"
@@ -22,7 +23,7 @@ func init() {
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	serverName := viper.GetString("payment.service-name")
+
 	serverType := viper.GetString("payment.server-to-run")
 
 	application, cleanup := service.NewApplication(ctx)
@@ -34,7 +35,6 @@ func main() {
 		viper.GetString("rabbitmq.host"),
 		viper.GetString("rabbitmq.port"),
 	)
-
 	defer func() {
 		_ = ch.Close()
 		_ = closeCh()
@@ -42,15 +42,13 @@ func main() {
 
 	go consumer.NewConsumer(application).Listen(ch)
 
-	paymentHandler := NewPaymentHandler()
-
+	paymentHandler := NewPaymentHandler(ch)
 	switch serverType {
 	case "http":
-		server.RunHttpServer(serverName, paymentHandler.RegisterRoutes)
+		server.RunHTTPServer(viper.GetString("payment.service-name"), paymentHandler.RegisterRoutes)
 	case "grpc":
-		logrus.Println("grpc: unsupported server type")
+		logrus.Panic("unsupported server type: grpc")
 	default:
-		logrus.Println("unsupported server type")
+		logrus.Panic("unreachable code")
 	}
-
 }
