@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/mrluzy/gorder-v2/common/tracing"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,12 +17,14 @@ type HTTPServer struct {
 }
 
 func (h HTTPServer) PostCustomerCustomerIDOrder(c *gin.Context, customerID string) {
+	ctx, span := tracing.Start(c, "PostCustomerCustomerIDOrder")
+	defer span.End()
 	var req orderpb.CreateOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	r, err := h.app.Commands.CreateOrder.Handle(c, command.CreateOrder{
+	r, err := h.app.Commands.CreateOrder.Handle(ctx, command.CreateOrder{
 		CustomerID: req.CustomerID,
 		Items:      req.Items,
 	})
@@ -32,13 +35,16 @@ func (h HTTPServer) PostCustomerCustomerIDOrder(c *gin.Context, customerID strin
 	c.JSON(http.StatusOK, gin.H{
 		"message":      "success",
 		"customer_id":  req.CustomerID,
+		"trace_id":     tracing.TraceID(ctx),
 		"order_id":     r.OrderID,
 		"redirect_url": fmt.Sprintf("http://localhost:8282/success?customerID=%s&orderID=%s", req.CustomerID, r.OrderID),
 	})
 }
 
 func (h HTTPServer) GetCustomerCustomerIDOrderOrderID(c *gin.Context, customerID string, orderID string) {
-	o, err := h.app.Queries.GetCustomerOrder.Handle(c, query.GetCustomerOrder{
+	ctx, span := tracing.Start(c, "PostCustomerCustomerIDOrder")
+	defer span.End()
+	o, err := h.app.Queries.GetCustomerOrder.Handle(ctx, query.GetCustomerOrder{
 		CustomerID: customerID,
 		OrderID:    orderID,
 	})
@@ -47,7 +53,8 @@ func (h HTTPServer) GetCustomerCustomerIDOrderOrderID(c *gin.Context, customerID
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "success",
+		"message":  "success",
+		"trace_id": tracing.TraceID(ctx),
 		"data": gin.H{
 			"Order": o,
 		},
