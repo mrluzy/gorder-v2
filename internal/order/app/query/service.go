@@ -2,8 +2,8 @@ package query
 
 import (
 	"context"
-
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
+
 	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
 )
 

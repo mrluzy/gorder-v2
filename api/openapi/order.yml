@@ -81,6 +81,12 @@ components:
   schemas:
     Order:
       type: object
+      required:
+        - id
+        - customerID
+        - status
+        - paymentLink
+        - items
       properties:
         id:
           type: string
@@ -110,6 +116,9 @@ components:
 
     ItemWithQuantity:
       type: object
+      required:
+        - id
+        - quantity
       properties:
         id:
           type: string
@@ -119,6 +128,11 @@ components:
  
     Item:
       type: object
+      required:
+        - id
+        - name
+        - quantity
+        - priceID
       properties:
         id:
           type: string
