@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/mrluzy/gorder-v2/common/tracing"
 
 	"github.com/mrluzy/gorder-v2/common/broker"
 	"github.com/mrluzy/gorder-v2/common/config"
@@ -24,7 +25,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	serviceName := viper.GetString("payment.service-name")
 	serverType := viper.GetString("payment.server-to-run")
+	shutdown, err := tracing.InitJaegerProvider(viper.GetString("jaeger.url"), serviceName)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer func() {
+		_ = shutdown(ctx)
+	}()
 
 	application, cleanup := service.NewApplication(ctx)
 	defer cleanup()
@@ -45,7 +54,7 @@ func main() {
 	paymentHandler := NewPaymentHandler(ch)
 	switch serverType {
 	case "http":
-		server.RunHTTPServer(viper.GetString("payment.service-name"), paymentHandler.RegisterRoutes)
+		server.RunHTTPServer(serviceName, paymentHandler.RegisterRoutes)
 	case "grpc":
 		logrus.Panic("unsupported server type: grpc")
 	default:

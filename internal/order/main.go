@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mrluzy/gorder-v2/common/broker"
 	"github.com/mrluzy/gorder-v2/common/config"
@@ -10,6 +9,7 @@ import (
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/mrluzy/gorder-v2/common/server"
+	"github.com/mrluzy/gorder-v2/common/tracing"
 	"github.com/mrluzy/gorder-v2/order/infrastructure/consumer"
 	"github.com/mrluzy/gorder-v2/order/ports"
 	"github.com/mrluzy/gorder-v2/order/service"
@@ -26,11 +26,18 @@ func init() {
 }
 
 func main() {
-	//logrus.Fatal(viper.GetString("stripe-key"))
 	serviceName := viper.GetString("order.service-name")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	shutdown, err := tracing.InitJaegerProvider(viper.GetString("jaeger.url"), serviceName)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer func() {
+		_ = shutdown(ctx)
+	}()
 
 	application, cleanup := service.NewApplication(ctx)
 	defer cleanup()
