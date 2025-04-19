@@ -2,7 +2,6 @@ package query
 
 import (
 	"context"
-
 	"github.com/mrluzy/gorder-v2/common/decorator"
 	domain "github.com/mrluzy/gorder-v2/order/domain/order"
 	"github.com/sirupsen/logrus"
@@ -39,5 +38,6 @@ func (g getCustomerOrderHandler) Handle(ctx context.Context, query GetCustomerOr
 	if err != nil {
 		return nil, err
 	}
+
 	return o, nil
 }

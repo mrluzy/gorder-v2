@@ -37,7 +37,7 @@ func (c *OrderConvertor) ClientToEntity(o *client.Order) *domain.Order {
 	c.check(o)
 	return &domain.Order{
 		ID:          o.Id,
-		CustomerID:  o.CustomerID,
+		CustomerID:  o.CustomerId,
 		Status:      o.Status,
 		PaymentLink: o.PaymentLink,
 		Items:       NewItemConvertor().ClientsToEntities(o.Items),
@@ -48,7 +48,7 @@ func (c *OrderConvertor) EntityToClient(o *domain.Order) *client.Order {
 	c.check(o)
 	return &client.Order{
 		Id:          o.ID,
-		CustomerID:  o.CustomerID,
+		CustomerId:  o.CustomerID,
 		Status:      o.Status,
 		PaymentLink: o.PaymentLink,
 		Items:       NewItemConvertor().EntitiesToClients(o.Items),
@@ -112,7 +112,7 @@ func (c *ItemConvertor) ClientToEntity(item client.Item) *entity.Item {
 		ID:       item.Id,
 		Name:     item.Name,
 		Quantity: item.Quantity,
-		PriceID:  item.PriceID,
+		PriceID:  item.PriceId,
 	}
 }
 
@@ -120,7 +120,7 @@ func (c *ItemConvertor) EntityToClient(item *entity.Item) client.Item {
 	return client.Item{
 		Id:       item.ID,
 		Name:     item.Name,
-		PriceID:  item.PriceID,
+		PriceId:  item.PriceID,
 		Quantity: item.Quantity,
 	}
 }
