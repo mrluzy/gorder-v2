@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/mrluzy/gorder-v2/common/broker"
-	"github.com/mrluzy/gorder-v2/common/config"
+	_ "github.com/mrluzy/gorder-v2/common/config"
 	"github.com/mrluzy/gorder-v2/common/discovery"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
 	"github.com/mrluzy/gorder-v2/common/logging"
@@ -20,9 +20,6 @@ import (
 
 func init() {
 	logging.Init()
-	if err := config.NewViperConfig(); err != nil {
-		logrus.Fatal(err)
-	}
 }
 
 func main() {
