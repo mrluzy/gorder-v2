@@ -3,8 +3,10 @@ package broker
 import (
 	"context"
 	"fmt"
+	_ "github.com/mrluzy/gorder-v2/common/config"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
 	"time"
 )
@@ -16,8 +18,7 @@ const (
 )
 
 var (
-	//maxRetryCount = viper.GetInt64("rabbitmq.max-retry")
-	maxRetryCount int64 = 3
+	maxRetryCount = viper.GetInt64("rabbitmq.max-retry")
 )
 
 func Connect(user, password, host, port string) (*amqp.Channel, func() error) {
@@ -74,6 +75,7 @@ func HandleRetry(ctx context.Context, ch *amqp.Channel, d *amqp.Delivery) error 
 	}
 	retryCount++
 	d.Headers[amqpRetryHeaderKey] = retryCount
+	logrus.Infof("max_retry_count: %d", maxRetryCount)
 	logrus.Infof("send message %s to dlq", d.MessageId)
 	if retryCount >= maxRetryCount {
 		return ch.PublishWithContext(ctx, "", DLQ, false, false, amqp.Publishing{
