@@ -11,18 +11,18 @@ servers:
         default: 127.0.0.1
 
 paths:
-  /customer/{customerID}/order/{orderID}:
+  /customer/{customer_id}/order/{order_id}:
     get:
       description: "get order"
       parameters:
         - in: path
-          name: customerID
+          name: customer_id
           schema:
             type: string
           required: true
 
         - in: path
-          name: orderID
+          name: order_id
           schema:
             type: string
           required: true
@@ -42,12 +42,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /customer/{customerID}/order:
+  /customer/{customer_id}/order:
     post:
       description: "create order"
       parameters:
         - in: path
-          name: customerID
+          name: customer_id
           schema:
             type: string
           required: true
@@ -83,14 +83,14 @@ components:
       type: object
       required:
         - id
-        - customerID
+        - customer_id
         - status
-        - paymentLink
+        - payment_link
         - items
       properties:
         id:
           type: string
-        customerID:
+        customer_id:
           type: string
         status:
           type: string
@@ -98,16 +98,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Item'
-        paymentLink:
+        payment_link:
           type: string
 
     CreateOrderRequest:
       type: object
       required:
-        - customerID
+        - customer_id
         - items
       properties:
-        customerID:
+        customer_id:
           type: string
         items:
           type: array
@@ -132,7 +132,7 @@ components:
         - id
         - name
         - quantity
-        - priceID
+        - price_id
       properties:
         id:
           type: string
@@ -141,7 +141,7 @@ components:
         quantity:
           type: integer
           format: int32
-        priceID:
+        price_id:
           type: string
 
     Error:

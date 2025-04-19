@@ -89,17 +89,17 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// PostCustomerCustomerIDOrderWithBody request with any body
-	PostCustomerCustomerIDOrderWithBody(ctx context.Context, customerID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostCustomerCustomerIdOrderWithBody request with any body
+	PostCustomerCustomerIdOrderWithBody(ctx context.Context, customerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	PostCustomerCustomerIDOrder(ctx context.Context, customerID string, body PostCustomerCustomerIDOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostCustomerCustomerIdOrder(ctx context.Context, customerId string, body PostCustomerCustomerIdOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetCustomerCustomerIDOrderOrderID request
-	GetCustomerCustomerIDOrderOrderID(ctx context.Context, customerID string, orderID string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetCustomerCustomerIdOrderOrderId request
+	GetCustomerCustomerIdOrderOrderId(ctx context.Context, customerId string, orderId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) PostCustomerCustomerIDOrderWithBody(ctx context.Context, customerID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostCustomerCustomerIDOrderRequestWithBody(c.Server, customerID, contentType, body)
+func (c *Client) PostCustomerCustomerIdOrderWithBody(ctx context.Context, customerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostCustomerCustomerIdOrderRequestWithBody(c.Server, customerId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -110,8 +110,8 @@ func (c *Client) PostCustomerCustomerIDOrderWithBody(ctx context.Context, custom
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostCustomerCustomerIDOrder(ctx context.Context, customerID string, body PostCustomerCustomerIDOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostCustomerCustomerIDOrderRequest(c.Server, customerID, body)
+func (c *Client) PostCustomerCustomerIdOrder(ctx context.Context, customerId string, body PostCustomerCustomerIdOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostCustomerCustomerIdOrderRequest(c.Server, customerId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -122,8 +122,8 @@ func (c *Client) PostCustomerCustomerIDOrder(ctx context.Context, customerID str
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetCustomerCustomerIDOrderOrderID(ctx context.Context, customerID string, orderID string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetCustomerCustomerIDOrderOrderIDRequest(c.Server, customerID, orderID)
+func (c *Client) GetCustomerCustomerIdOrderOrderId(ctx context.Context, customerId string, orderId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCustomerCustomerIdOrderOrderIdRequest(c.Server, customerId, orderId)
 	if err != nil {
 		return nil, err
 	}
@@ -134,24 +134,24 @@ func (c *Client) GetCustomerCustomerIDOrderOrderID(ctx context.Context, customer
 	return c.Client.Do(req)
 }
 
-// NewPostCustomerCustomerIDOrderRequest calls the generic PostCustomerCustomerIDOrder builder with application/json body
-func NewPostCustomerCustomerIDOrderRequest(server string, customerID string, body PostCustomerCustomerIDOrderJSONRequestBody) (*http.Request, error) {
+// NewPostCustomerCustomerIdOrderRequest calls the generic PostCustomerCustomerIdOrder builder with application/json body
+func NewPostCustomerCustomerIdOrderRequest(server string, customerId string, body PostCustomerCustomerIdOrderJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostCustomerCustomerIDOrderRequestWithBody(server, customerID, "application/json", bodyReader)
+	return NewPostCustomerCustomerIdOrderRequestWithBody(server, customerId, "application/json", bodyReader)
 }
 
-// NewPostCustomerCustomerIDOrderRequestWithBody generates requests for PostCustomerCustomerIDOrder with any type of body
-func NewPostCustomerCustomerIDOrderRequestWithBody(server string, customerID string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostCustomerCustomerIdOrderRequestWithBody generates requests for PostCustomerCustomerIdOrder with any type of body
+func NewPostCustomerCustomerIdOrderRequestWithBody(server string, customerId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "customerID", runtime.ParamLocationPath, customerID)
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "customer_id", runtime.ParamLocationPath, customerId)
 	if err != nil {
 		return nil, err
 	}
@@ -181,20 +181,20 @@ func NewPostCustomerCustomerIDOrderRequestWithBody(server string, customerID str
 	return req, nil
 }
 
-// NewGetCustomerCustomerIDOrderOrderIDRequest generates requests for GetCustomerCustomerIDOrderOrderID
-func NewGetCustomerCustomerIDOrderOrderIDRequest(server string, customerID string, orderID string) (*http.Request, error) {
+// NewGetCustomerCustomerIdOrderOrderIdRequest generates requests for GetCustomerCustomerIdOrderOrderId
+func NewGetCustomerCustomerIdOrderOrderIdRequest(server string, customerId string, orderId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "customerID", runtime.ParamLocationPath, customerID)
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "customer_id", runtime.ParamLocationPath, customerId)
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "orderID", runtime.ParamLocationPath, orderID)
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "order_id", runtime.ParamLocationPath, orderId)
 	if err != nil {
 		return nil, err
 	}
@@ -265,16 +265,16 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// PostCustomerCustomerIDOrderWithBodyWithResponse request with any body
-	PostCustomerCustomerIDOrderWithBodyWithResponse(ctx context.Context, customerID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIDOrderResponse, error)
+	// PostCustomerCustomerIdOrderWithBodyWithResponse request with any body
+	PostCustomerCustomerIdOrderWithBodyWithResponse(ctx context.Context, customerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIdOrderResponse, error)
 
-	PostCustomerCustomerIDOrderWithResponse(ctx context.Context, customerID string, body PostCustomerCustomerIDOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIDOrderResponse, error)
+	PostCustomerCustomerIdOrderWithResponse(ctx context.Context, customerId string, body PostCustomerCustomerIdOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIdOrderResponse, error)
 
-	// GetCustomerCustomerIDOrderOrderIDWithResponse request
-	GetCustomerCustomerIDOrderOrderIDWithResponse(ctx context.Context, customerID string, orderID string, reqEditors ...RequestEditorFn) (*GetCustomerCustomerIDOrderOrderIDResponse, error)
+	// GetCustomerCustomerIdOrderOrderIdWithResponse request
+	GetCustomerCustomerIdOrderOrderIdWithResponse(ctx context.Context, customerId string, orderId string, reqEditors ...RequestEditorFn) (*GetCustomerCustomerIdOrderOrderIdResponse, error)
 }
 
-type PostCustomerCustomerIDOrderResponse struct {
+type PostCustomerCustomerIdOrderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Order
@@ -282,7 +282,7 @@ type PostCustomerCustomerIDOrderResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r PostCustomerCustomerIDOrderResponse) Status() string {
+func (r PostCustomerCustomerIdOrderResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -290,14 +290,14 @@ func (r PostCustomerCustomerIDOrderResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PostCustomerCustomerIDOrderResponse) StatusCode() int {
+func (r PostCustomerCustomerIdOrderResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetCustomerCustomerIDOrderOrderIDResponse struct {
+type GetCustomerCustomerIdOrderOrderIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Order
@@ -305,7 +305,7 @@ type GetCustomerCustomerIDOrderOrderIDResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r GetCustomerCustomerIDOrderOrderIDResponse) Status() string {
+func (r GetCustomerCustomerIdOrderOrderIdResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -313,48 +313,48 @@ func (r GetCustomerCustomerIDOrderOrderIDResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetCustomerCustomerIDOrderOrderIDResponse) StatusCode() int {
+func (r GetCustomerCustomerIdOrderOrderIdResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// PostCustomerCustomerIDOrderWithBodyWithResponse request with arbitrary body returning *PostCustomerCustomerIDOrderResponse
-func (c *ClientWithResponses) PostCustomerCustomerIDOrderWithBodyWithResponse(ctx context.Context, customerID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIDOrderResponse, error) {
-	rsp, err := c.PostCustomerCustomerIDOrderWithBody(ctx, customerID, contentType, body, reqEditors...)
+// PostCustomerCustomerIdOrderWithBodyWithResponse request with arbitrary body returning *PostCustomerCustomerIdOrderResponse
+func (c *ClientWithResponses) PostCustomerCustomerIdOrderWithBodyWithResponse(ctx context.Context, customerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIdOrderResponse, error) {
+	rsp, err := c.PostCustomerCustomerIdOrderWithBody(ctx, customerId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostCustomerCustomerIDOrderResponse(rsp)
+	return ParsePostCustomerCustomerIdOrderResponse(rsp)
 }
 
-func (c *ClientWithResponses) PostCustomerCustomerIDOrderWithResponse(ctx context.Context, customerID string, body PostCustomerCustomerIDOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIDOrderResponse, error) {
-	rsp, err := c.PostCustomerCustomerIDOrder(ctx, customerID, body, reqEditors...)
+func (c *ClientWithResponses) PostCustomerCustomerIdOrderWithResponse(ctx context.Context, customerId string, body PostCustomerCustomerIdOrderJSONRequestBody, reqEditors ...RequestEditorFn) (*PostCustomerCustomerIdOrderResponse, error) {
+	rsp, err := c.PostCustomerCustomerIdOrder(ctx, customerId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostCustomerCustomerIDOrderResponse(rsp)
+	return ParsePostCustomerCustomerIdOrderResponse(rsp)
 }
 
-// GetCustomerCustomerIDOrderOrderIDWithResponse request returning *GetCustomerCustomerIDOrderOrderIDResponse
-func (c *ClientWithResponses) GetCustomerCustomerIDOrderOrderIDWithResponse(ctx context.Context, customerID string, orderID string, reqEditors ...RequestEditorFn) (*GetCustomerCustomerIDOrderOrderIDResponse, error) {
-	rsp, err := c.GetCustomerCustomerIDOrderOrderID(ctx, customerID, orderID, reqEditors...)
+// GetCustomerCustomerIdOrderOrderIdWithResponse request returning *GetCustomerCustomerIdOrderOrderIdResponse
+func (c *ClientWithResponses) GetCustomerCustomerIdOrderOrderIdWithResponse(ctx context.Context, customerId string, orderId string, reqEditors ...RequestEditorFn) (*GetCustomerCustomerIdOrderOrderIdResponse, error) {
+	rsp, err := c.GetCustomerCustomerIdOrderOrderId(ctx, customerId, orderId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetCustomerCustomerIDOrderOrderIDResponse(rsp)
+	return ParseGetCustomerCustomerIdOrderOrderIdResponse(rsp)
 }
 
-// ParsePostCustomerCustomerIDOrderResponse parses an HTTP response from a PostCustomerCustomerIDOrderWithResponse call
-func ParsePostCustomerCustomerIDOrderResponse(rsp *http.Response) (*PostCustomerCustomerIDOrderResponse, error) {
+// ParsePostCustomerCustomerIdOrderResponse parses an HTTP response from a PostCustomerCustomerIdOrderWithResponse call
+func ParsePostCustomerCustomerIdOrderResponse(rsp *http.Response) (*PostCustomerCustomerIdOrderResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PostCustomerCustomerIDOrderResponse{
+	response := &PostCustomerCustomerIdOrderResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -379,15 +379,15 @@ func ParsePostCustomerCustomerIDOrderResponse(rsp *http.Response) (*PostCustomer
 	return response, nil
 }
 
-// ParseGetCustomerCustomerIDOrderOrderIDResponse parses an HTTP response from a GetCustomerCustomerIDOrderOrderIDWithResponse call
-func ParseGetCustomerCustomerIDOrderOrderIDResponse(rsp *http.Response) (*GetCustomerCustomerIDOrderOrderIDResponse, error) {
+// ParseGetCustomerCustomerIdOrderOrderIdResponse parses an HTTP response from a GetCustomerCustomerIdOrderOrderIdWithResponse call
+func ParseGetCustomerCustomerIdOrderOrderIdResponse(rsp *http.Response) (*GetCustomerCustomerIdOrderOrderIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetCustomerCustomerIDOrderOrderIDResponse{
+	response := &GetCustomerCustomerIdOrderOrderIdResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
