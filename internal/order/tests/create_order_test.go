@@ -38,7 +38,7 @@ func TestCreateOrder_success(t *testing.T) {
 	response := getResponse(t, "123", sw.PostCustomerCustomerIdOrderJSONRequestBody{
 		CustomerId: "123",
 		Items: []sw.ItemWithQuantity{
-			sw.ItemWithQuantity{
+			{
 				Id:       "test-item-1",
 				Quantity: 10,
 			},
@@ -49,6 +49,9 @@ func TestCreateOrder_success(t *testing.T) {
 }
 
 func getResponse(t *testing.T, customerID string, body sw.PostCustomerCustomerIdOrderJSONRequestBody) *sw.PostCustomerCustomerIdOrderResponse {
+	// 加上 t.Helper()，可以让测试框架报告错误时，
+	//把锅甩给真正写测试逻辑的地方，
+	//让你快速找到“谁”用了“哪个 helper”出问题，而不是去翻工具函数代码。
 	t.Helper()
 	client, err := sw.NewClientWithResponses(server)
 	if err != nil {
