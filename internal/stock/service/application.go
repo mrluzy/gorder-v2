@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/mrluzy/gorder-v2/stock/infrastructure/integration"
+	"github.com/mrluzy/gorder-v2/stock/infrastructure/persistent"
 
 	"github.com/mrluzy/gorder-v2/common/metrics"
 	"github.com/mrluzy/gorder-v2/stock/adapters"
@@ -12,7 +13,9 @@ import (
 )
 
 func NewApplication(_ context.Context) app.Application {
-	stockRepo := adapters.NewMemoryStockRepository()
+	//stockRepo := adapters.NewMemoryStockRepository()
+	db := persistent.NewMySQL()
+	stockRepo := adapters.NewMySQLStockRepository(db)
 	logger := logrus.NewEntry(logrus.StandardLogger())
 	stripeAPI := integration.NewStripeAPI()
 	metricsClient := metrics.TodoMetrics{}
