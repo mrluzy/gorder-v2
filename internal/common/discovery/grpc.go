@@ -38,11 +38,14 @@ func RegisterToConsul(ctx context.Context, serviceName string) (func() error, er
 	}, nil
 }
 
+// GetServiceAddr 从 Consul 注册中心 获取一个服务地址
 func GetServiceAddr(ctx context.Context, serviceName string) (string, error) {
 	registry, err := consul.New(viper.GetString("consul.addr"))
 	if err != nil {
 		return "", err
 	}
+
+	// Discover 从 Consul 注册中心 获取所有服务的可用实例地址
 	addrs, err := registry.Discover(ctx, serviceName)
 	if err != nil {
 		return "", err
@@ -50,6 +53,8 @@ func GetServiceAddr(ctx context.Context, serviceName string) (string, error) {
 	if len(addrs) == 0 {
 		return "", fmt.Errorf("get empty %s address from consul", serviceName)
 	}
+
+	// 随机返回一个可用的addr
 	i := rand.Intn(len(addrs))
 	logrus.Infof("Discovered %d instance of %s address from consul, addrs:%v", len(addrs), serviceName, addrs)
 	return addrs[i], nil

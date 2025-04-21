@@ -33,6 +33,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 	defer func() {
+		// 在 main 函数退出前调用 shutdown(ctx)，用于优雅关闭 Jaeger tracer
 		_ = shutdown(ctx)
 	}()
 

@@ -26,7 +26,11 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 	if err != nil {
 		panic(err)
 	}
+
 	stockGRPC := grpc.NewStockGRPC(stockClient)
+
+	// 通过从配置中读取 RabbitMQ 的用户名、密码、主机和端口，
+	// 创建了一个到 RabbitMQ 的连接
 	ch, closeCh := broker.Connect(
 		viper.GetString("rabbitmq.user"),
 		viper.GetString("rabbitmq.password"),
