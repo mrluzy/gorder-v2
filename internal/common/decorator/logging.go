@@ -29,7 +29,8 @@ func (q queryLoggingDecorator[C, R]) Handle(ctx context.Context, cmd C) (result 
 			logger.Error("Failed to execute query", err)
 		}
 	}()
-	return q.base.Handle(ctx, cmd)
+	result, err = q.base.Handle(ctx, cmd)
+	return result, err
 }
 
 type commandLoggingDecorator[C, R any] struct {
@@ -51,7 +52,8 @@ func (q commandLoggingDecorator[C, R]) Handle(ctx context.Context, cmd C) (resul
 			logger.Error("Failed to execute command", err)
 		}
 	}()
-	return q.base.Handle(ctx, cmd)
+	result, err = q.base.Handle(ctx, cmd)
+	return result, err
 }
 
 func generateActionName(cmd any) string {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/mrluzy/gorder-v2/stock/infrastructure/integration"
 
 	"github.com/mrluzy/gorder-v2/common/metrics"
 	"github.com/mrluzy/gorder-v2/stock/adapters"
@@ -13,11 +14,12 @@ import (
 func NewApplication(_ context.Context) app.Application {
 	stockRepo := adapters.NewMemoryStockRepository()
 	logger := logrus.NewEntry(logrus.StandardLogger())
+	stripeAPI := integration.NewStripeAPI()
 	metricsClient := metrics.TodoMetrics{}
 	return app.Application{
 		Commands: app.Commands{},
 		Queries: app.Queries{
-			CheckIfItemsInStock: query.NewCheckIfItemsInStockHandler(stockRepo, logger, metricsClient),
+			CheckIfItemsInStock: query.NewCheckIfItemsInStockHandler(stockRepo, stripeAPI, logger, metricsClient),
 			GetItems:            query.NewGetItemsHandler(stockRepo, logger, metricsClient),
 		},
 	}

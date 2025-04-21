@@ -38,9 +38,12 @@ func NewOrderGRPCClient(ctx context.Context) (client orderpb.OrderServiceClient,
 }
 
 func NewStockGRPCClient(ctx context.Context) (client stockpb.StockServiceClient, close func() error, err error) {
+	// 检查stockGRPC服务是否可用
 	if !WaitForStockGRPCClient(viper.GetDuration("dial-grpc-timeout") * time.Second) {
 		return nil, nil, errors.New("stock grpc not available")
 	}
+
+	// GetServiceAddr 从 Consul 注册中心 获取一个服务地址
 	grpcAddr, err := discovery.GetServiceAddr(ctx, viper.GetString("stock.service-name"))
 	if err != nil {
 		return nil, func() error { return nil }, err
@@ -58,9 +61,17 @@ func NewStockGRPCClient(ctx context.Context) (client stockpb.StockServiceClient,
 	return stockpb.NewStockServiceClient(conn), conn.Close, nil
 }
 
+// 为 gRPC 客户端构造连接选项
 func grpcDialOpts(_ string) []grpc.DialOption {
 	return []grpc.DialOption{
+		// 默认情况下，gRPC 使用 TLS 加密传输
+		// 这个配置明确表示使用不安全的明文连接，一般只在开发环境或测试阶段使用
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+
+		// 这个选项的目的是让你的 gRPC 客户端能自动记录 trace 信息（配合 Jaeger、Zipkin 等观察系统）：
+		// 发送请求时创建 trace span
+		// 和服务端 trace 信息链路打通
+		// 自动传播上下文（context）
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	}
 }
