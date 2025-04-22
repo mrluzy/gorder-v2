@@ -3,11 +3,19 @@ package query
 import (
 	"context"
 	"github.com/mrluzy/gorder-v2/common/decorator"
+	"github.com/mrluzy/gorder-v2/common/handler/redis"
 	"github.com/mrluzy/gorder-v2/stock/entity"
+	"github.com/pkg/errors"
+	"strings"
+	"time"
 
 	domain "github.com/mrluzy/gorder-v2/stock/domain/stock"
 	"github.com/mrluzy/gorder-v2/stock/infrastructure/integration"
 	"github.com/sirupsen/logrus"
+)
+
+const (
+	redisLockPrefix = "check_stock_"
 )
 
 type CheckIfItemsInStock struct {
@@ -43,31 +51,55 @@ func NewCheckIfItemsInStockHandler(
 	)
 }
 
-// todo:删除
+// Deprecated
 var stub = map[string]string{
-	"1": "price_1RE3xECQIkU5HEs5mCwUNKQ5",
-	"2": "price_1RE3wRCQIkU5HEs5mtvBQE7U",
+	"1": "price_1QBYvXRuyMJmUCSsEyQm2oP7",
+	"2": "price_1QBYl4RuyMJmUCSsWt2tgh6d",
 }
 
-func (c checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfItemsInStock) ([]*entity.Item, error) {
-	if err := c.checkStock(ctx, query.Items); err != nil {
-		return nil, err
+func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfItemsInStock) ([]*entity.Item, error) {
+	if err := lock(ctx, getLockKey(query)); err != nil {
+		return nil, errors.Wrapf(err, "redis  get lock error, key: %s", getLockKey(query))
 	}
-	var items []*entity.Item
-	for _, item := range query.Items {
-		// TODO：改成从数据库或stripe获取
-		priceID, err := c.stripeAPI.GetPriceByProductID(ctx, item.ID)
+	defer func() {
+		if err := unlock(ctx, getLockKey(query)); err != nil {
+			logrus.Warnf("redis unlock fail, err=%v", err)
+		}
+	}()
+
+	var res []*entity.Item
+	for _, i := range query.Items {
+		priceID, err := h.stripeAPI.GetPriceByProductID(ctx, i.ID)
 		if err != nil || priceID == "" {
 			return nil, err
 		}
-		items = append(items, &entity.Item{
-			ID:       item.ID,
-			Quantity: item.Quantity,
+		res = append(res, &entity.Item{
+			ID:       i.ID,
+			Quantity: i.Quantity,
 			PriceID:  priceID,
 		})
 	}
-	// TODO:扣库存
-	return items, nil
+
+	if err := h.checkStock(ctx, query.Items); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func getLockKey(query CheckIfItemsInStock) string {
+	var ids []string
+	for _, i := range query.Items {
+		ids = append(ids, i.ID)
+	}
+	return redisLockPrefix + strings.Join(ids, "_")
+}
+
+func unlock(ctx context.Context, key string) error {
+	return redis.Del(ctx, redis.LocalClient(), key)
+}
+
+func lock(ctx context.Context, key string) error {
+	return redis.SetNX(ctx, redis.LocalClient(), key, "1", 5*time.Minute)
 }
 
 func (h checkIfItemsInStockHandler) checkStock(ctx context.Context, query []*entity.ItemWithQuantity) error {
@@ -102,7 +134,24 @@ func (h checkIfItemsInStockHandler) checkStock(ctx context.Context, query []*ent
 		}
 	}
 	if ok {
-		return nil
+		return h.stockRepo.UpdateStock(ctx, query, func(
+			ctx context.Context,
+			existing []*entity.ItemWithQuantity,
+			query []*entity.ItemWithQuantity,
+		) ([]*entity.ItemWithQuantity, error) {
+			var newItems []*entity.ItemWithQuantity
+			for _, e := range existing {
+				for _, q := range query {
+					if e.ID == q.ID {
+						newItems = append(newItems, &entity.ItemWithQuantity{
+							ID:       e.ID,
+							Quantity: e.Quantity - q.Quantity,
+						})
+					}
+				}
+			}
+			return newItems, nil
+		})
 	}
 	return domain.ExceedStockError{FailedOn: failedOn}
 }

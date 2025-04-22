@@ -28,28 +28,30 @@ func NewMySQL() *MySQL {
 	if err != nil {
 		logrus.Panicf("connect to mysql failed, err=%v", err)
 	}
-	logrus.Infof("connect to mysql success")
 	return &MySQL{db: db}
 }
 
 type StockModel struct {
-	ID        string    `gorm:"column:id"`
+	ID        int64     `gorm:"column:id"`
 	ProductID string    `gorm:"column:product_id"`
 	Quantity  int32     `gorm:"column:quantity"`
 	CreatedAt time.Time `gorm:"column:created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at"`
+	UpdateAt  time.Time `gorm:"column:updated_at"`
 }
 
 func (StockModel) TableName() string {
 	return "o_stock"
 }
 
+func (d MySQL) StartTransaction(fc func(tx *gorm.DB) error) error {
+	return d.db.Transaction(fc)
+}
+
 func (d MySQL) BatchGetStockByID(ctx context.Context, productIDs []string) ([]StockModel, error) {
-	var results []StockModel
-	tx := d.db.WithContext(ctx).Where("product_id IN ?", productIDs).Find(&results)
+	var result []StockModel
+	tx := d.db.WithContext(ctx).Where("product_id IN ?", productIDs).Find(&result)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	logrus.Infof("batch_get_stock_by_id %v", results)
-	return results, nil
+	return result, nil
 }

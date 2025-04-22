@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/mrluzy/gorder-v2/common/tracing"
 	"github.com/mrluzy/gorder-v2/stock/convertor"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
 	"github.com/mrluzy/gorder-v2/stock/app"
@@ -39,7 +41,7 @@ func (G GRPCServer) CheckIfItemsInStock(ctx context.Context, request *stockpb.Ch
 		Items: convertor.NewItemWithQuantityConvertor().ProtosToEntities(request.Items),
 	})
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &stockpb.CheckIfItemsInStockResponse{
 		InStock: 1,
