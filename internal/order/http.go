@@ -1,11 +1,12 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mrluzy/gorder-v2/common"
 	client "github.com/mrluzy/gorder-v2/common/client/order"
+	"github.com/mrluzy/gorder-v2/common/consts"
+	"github.com/mrluzy/gorder-v2/common/handler/errors"
 	"github.com/mrluzy/gorder-v2/order/app"
 	"github.com/mrluzy/gorder-v2/order/app/command"
 	"github.com/mrluzy/gorder-v2/order/app/dto"
@@ -30,9 +31,11 @@ func (h HTTPServer) PostCustomerCustomerIdOrder(c *gin.Context, _ string) {
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
+		err = errors.NewWithErr(consts.ErrnoBindRequestError, err)
 		return
 	}
 	if err = h.validate(req); err != nil {
+		err = errors.NewWithErr(consts.ErrnoRequestValidateError, err)
 		return
 	}
 	r, err := h.app.Commands.CreateOrder.Handle(c.Request.Context(), command.CreateOrder{
@@ -76,7 +79,7 @@ func (h HTTPServer) GetCustomerCustomerIdOrderOrderId(c *gin.Context, customerID
 func (h HTTPServer) validate(req client.CreateOrderRequest) error {
 	for _, v := range req.Items {
 		if v.Quantity < 1 {
-			return errors.New("quantity must be positive")
+			return fmt.Errorf("quanti ty must be positive, got %d from %s", v.Quantity, v.Id)
 		}
 	}
 	return nil

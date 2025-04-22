@@ -3,6 +3,7 @@ package common
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/mrluzy/gorder-v2/common/handler/errors"
 	"github.com/mrluzy/gorder-v2/common/tracing"
 	"net/http"
 )
@@ -24,9 +25,10 @@ func (base *BaseResponse) Response(c *gin.Context, err error, data interface{}) 
 }
 
 func (base *BaseResponse) success(c *gin.Context, data interface{}) {
+	errno, errmsg := errors.Output(nil)
 	r := response{
-		Errno:   0,
-		Message: "success",
+		Errno:   errno,
+		Message: errmsg,
 		Data:    data,
 		TraceID: tracing.TraceID(c.Request.Context()),
 	}
@@ -37,9 +39,10 @@ func (base *BaseResponse) success(c *gin.Context, data interface{}) {
 }
 
 func (base *BaseResponse) error(c *gin.Context, err error) {
+	errno, errmsg := errors.Output(err)
 	r := response{
-		Errno:   2,
-		Message: err.Error(),
+		Errno:   errno,
+		Message: errmsg,
 		Data:    nil,
 		TraceID: tracing.TraceID(c.Request.Context()),
 	}
