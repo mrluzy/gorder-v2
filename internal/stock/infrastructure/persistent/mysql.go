@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	_ "github.com/mrluzy/gorder-v2/common/config"
+	"github.com/mrluzy/gorder-v2/common/logging"
+	"github.com/mrluzy/gorder-v2/stock/infrastructure/persistent/builder"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -28,6 +31,13 @@ func NewMySQL() *MySQL {
 	if err != nil {
 		logrus.Panicf("connect to mysql failed, err=%v", err)
 	}
+	//db.Callback().Create().Before("gorm:create").Register("set_create_time", func(d *gorm.DB) {
+	//	d.Statement.SetColumn("create_time", time.Now().Format(time.DateTime))
+	//})
+	return &MySQL{db: db}
+}
+
+func NewMySQLWithDB(db *gorm.DB) *MySQL {
 	return &MySQL{db: db}
 }
 
@@ -35,6 +45,7 @@ type StockModel struct {
 	ID        int64     `gorm:"column:id"`
 	ProductID string    `gorm:"column:product_id"`
 	Quantity  int32     `gorm:"column:quantity"`
+	Version   int64     `gorm:"column:version"`
 	CreatedAt time.Time `gorm:"column:created_at"`
 	UpdateAt  time.Time `gorm:"column:updated_at"`
 }
@@ -47,11 +58,26 @@ func (d MySQL) StartTransaction(fc func(tx *gorm.DB) error) error {
 	return d.db.Transaction(fc)
 }
 
-func (d MySQL) BatchGetStockByID(ctx context.Context, productIDs []string) ([]StockModel, error) {
+func (d MySQL) BatchGetStockByID(ctx context.Context, query *builder.Stock) ([]StockModel, error) {
+	_, deferLog := logging.WhenMySQL(ctx, "Create", query)
 	var result []StockModel
-	tx := d.db.WithContext(ctx).Where("product_id IN ?", productIDs).Find(&result)
+	tx := query.Fill(d.db.WithContext(ctx).Clauses(clause.Returning{})).Find(&result)
+	deferLog(result, &tx.Error)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 	return result, nil
+}
+
+func (d MySQL) Create(ctx context.Context, create *StockModel) error {
+	_, deferLog := logging.WhenMySQL(ctx, "Create", create)
+	var returning StockModel
+	err := d.db.WithContext(ctx).Model(&returning).Clauses(clause.Returning{}).Create(create).Error
+	deferLog(returning, &err)
+	return err
+}
+
+func (m *StockModel) BeforeCreate(tx *gorm.DB) (err error) {
+	m.UpdateAt = time.Now()
+	return
 }

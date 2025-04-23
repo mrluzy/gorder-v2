@@ -22,11 +22,12 @@ func RunGRPCServer(serverName string, registerServer func(server *grpc.Server)) 
 		// TODO:WARNING
 		addr = viper.GetString("fallback-grpc-addr")
 	}
-	RunGRPCServerOnAddr(addr, registerServer)
+	runGRPCServerOnAddr(addr, registerServer)
 }
 
-func RunGRPCServerOnAddr(addr string, registerServer func(server *grpc.Server)) {
+func runGRPCServerOnAddr(addr string, registerServer func(server *grpc.Server)) {
 	logrusEntry := logrus.NewEntry(logrus.StandardLogger())
+
 	grpcServer := grpc.NewServer(
 		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.ChainUnaryInterceptor(
@@ -37,6 +38,7 @@ func RunGRPCServerOnAddr(addr string, registerServer func(server *grpc.Server)) 
 			grpc_tags.StreamServerInterceptor(grpc_tags.WithFieldExtractor(grpc_tags.CodeGenRequestFieldExtractor)),
 			grpc_logrus.StreamServerInterceptor(logrusEntry),
 		))
+
 	registerServer(grpcServer)
 	listen, err := net.Listen("tcp", addr)
 	if err != nil {
