@@ -63,35 +63,42 @@ func NewCreateOrderHandler(
 	)
 }
 
+// 该处理器的核心逻辑包括验证库存、创建订单并将其发布到 RabbitMQ 队列
 func (c createOrderHandler) Handle(ctx context.Context, cmd CreateOrder) (*CreateOrderResult, error) {
+	// 声明 RabbitMQ 队列
 	q, err := c.channel.QueueDeclare(broker.EventOrderCreated, true, false, false, false, nil)
 	if err != nil {
 		return nil, err
 	}
 
+	// 创建 OpenTelemetry 的 Span 用于追踪
 	t := otel.Tracer("rabbitmq")
 	ctx, span := t.Start(ctx, fmt.Sprintf("rabbitmq.%s.publish", q.Name))
 	defer span.End()
 
+	// 验证库存
 	validItems, err := c.validate(ctx, cmd.Items)
 	if err != nil {
 		return nil, err
 	}
 
+	// 创建待处理订单
 	pendingOrder, err := domain.NewPendingOrder(cmd.CustomerID, validItems)
 	if err != nil {
 		return nil, err
 	}
+
+	// 存储订单
 	o, err := c.orderRepo.Create(ctx, pendingOrder)
 	if err != nil {
 		return nil, err
 	}
 
+	// 将订单信息发布到 RabbitMQ
 	marshalledOrder, err := json.Marshal(o)
 	if err != nil {
 		return nil, err
 	}
-
 	header := broker.InjectRabbitMQHeaders(ctx)
 	err = c.channel.PublishWithContext(ctx, "", q.Name, false, false, amqp.Publishing{
 		ContentType:  "application/json",

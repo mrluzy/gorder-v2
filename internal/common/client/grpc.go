@@ -58,6 +58,7 @@ func NewStockGRPCClient(ctx context.Context) (client stockpb.StockServiceClient,
 	if err != nil {
 		return nil, func() error { return nil }, err
 	}
+	// 通过连接对象 conn 创建一个新的 gRPC 客户端 StockServiceClient
 	return stockpb.NewStockServiceClient(conn), conn.Close, nil
 }
 

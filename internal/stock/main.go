@@ -47,6 +47,8 @@ func main() {
 
 	switch serverType {
 	case "grpc":
+		// 在 Go 中，将函数作为参数传递时，函数内用到的外部变量会被“打包”进去（闭包），
+		// 这些变量会一并随着函数传入并保留其值
 		server.RunGRPCServer(serviceName, func(server *grpc.Server) {
 			svc := ports.NewGRPCServer(application)
 			stockpb.RegisterStockServiceServer(server, svc)

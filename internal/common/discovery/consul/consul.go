@@ -70,7 +70,7 @@ func (r Registry) Deregister(_ context.Context, instanceID, serviceName string) 
 	return r.client.Agent().ServiceDeregister(instanceID)
 }
 
-// Discover 从 Consul 注册中心 获取所有服务的可用实例地址
+// 从 Consul 注册中心 获取所有服务的可用实例地址
 func (r Registry) Discover(_ context.Context, serviceName string) ([]string, error) {
 	// 查询服务健康检查通过的实例
 	entries, _, err := r.client.Health().Service(serviceName, "", true, nil)
