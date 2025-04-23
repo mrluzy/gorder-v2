@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 	"sync"
 	"testing"
 )
@@ -40,7 +41,9 @@ func setupTestDB(t *testing.T) *persistent.MySQL {
 		viper.GetString("mysql.port"),
 		testDB,
 	)
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: gormlogger.Default.LogMode(gormlogger.Info),
+	})
 	assert.NoError(t, err)
 	assert.NoError(t, db.AutoMigrate(&persistent.StockModel{}))
 	return persistent.NewMySQLWithDB(db)
@@ -56,7 +59,7 @@ func TestMySQLStockRepository_UpdateStock_Race(t *testing.T) {
 		initialStock = 100
 	)
 
-	err := db.Create(ctx, &persistent.StockModel{
+	err := db.Create(ctx, nil, &persistent.StockModel{
 		ProductID: testItem,
 		Quantity:  int32(initialStock),
 	})
@@ -112,7 +115,7 @@ func TestMySQLStockRepository_UpdateStock_OverSell(t *testing.T) {
 		initialStock = 5
 	)
 
-	err := db.Create(ctx, &persistent.StockModel{
+	err := db.Create(ctx, nil, &persistent.StockModel{
 		ProductID: testItem,
 		Quantity:  int32(initialStock),
 	})
