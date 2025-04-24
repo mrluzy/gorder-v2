@@ -6,8 +6,8 @@ import (
 	"github.com/pkg/errors"
 
 	"fmt"
-	"github.com/mrluzy/gorder-v2/order/convertor"
-	"github.com/mrluzy/gorder-v2/order/entity"
+	"github.com/mrluzy/gorder-v2/common/convertor"
+	"github.com/mrluzy/gorder-v2/common/entity"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc/status"
 
@@ -127,10 +127,7 @@ func packItems(items []*entity.ItemWithQuantity) []*entity.ItemWithQuantity {
 	}
 	var res []*entity.ItemWithQuantity
 	for id, quantity := range mergedItems {
-		res = append(res, &entity.ItemWithQuantity{
-			ID:       id,
-			Quantity: quantity,
-		})
+		res = append(res, entity.NewItemWithQuantity(id, quantity))
 	}
 	return res
 }

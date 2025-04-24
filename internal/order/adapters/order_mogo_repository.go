@@ -3,9 +3,9 @@ package adapters
 import (
 	"context"
 	_ "github.com/mrluzy/gorder-v2/common/config"
+	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/common/logging"
 	domain "github.com/mrluzy/gorder-v2/order/domain/order"
-	"github.com/mrluzy/gorder-v2/order/entity"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

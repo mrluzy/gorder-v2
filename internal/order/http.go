@@ -6,12 +6,12 @@ import (
 	"github.com/mrluzy/gorder-v2/common"
 	client "github.com/mrluzy/gorder-v2/common/client/order"
 	"github.com/mrluzy/gorder-v2/common/consts"
+	"github.com/mrluzy/gorder-v2/common/convertor"
 	"github.com/mrluzy/gorder-v2/common/handler/errors"
 	"github.com/mrluzy/gorder-v2/order/app"
 	"github.com/mrluzy/gorder-v2/order/app/command"
 	"github.com/mrluzy/gorder-v2/order/app/dto"
 	"github.com/mrluzy/gorder-v2/order/app/query"
-	"github.com/mrluzy/gorder-v2/order/convertor"
 )
 
 type HTTPServer struct {
@@ -72,7 +72,13 @@ func (h HTTPServer) GetCustomerCustomerIdOrderOrderId(c *gin.Context, customerID
 	if err != nil {
 		return
 	}
-	resp.Order = convertor.NewOrderConvertor().EntityToClient(o)
+	resp.Order = &client.Order{
+		Id:          o.ID,
+		CustomerId:  o.CustomerID,
+		Status:      o.Status,
+		Items:       convertor.NewItemConvertor().EntitiesToClients(o.Items),
+		PaymentLink: o.PaymentLink,
+	}
 
 }
 

@@ -1,8 +1,9 @@
 package convertor
 
 import (
+	client "github.com/mrluzy/gorder-v2/common/client/order"
+	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
-	"github.com/mrluzy/gorder-v2/stock/entity"
 )
 
 type OrderConvertor struct{}
@@ -31,6 +32,28 @@ func (c *OrderConvertor) ProtoToEntity(o *orderpb.Order) *entity.Order {
 	}
 }
 
+func (c *OrderConvertor) ClientToEntity(o *client.Order) *entity.Order {
+	c.check(o)
+	return &entity.Order{
+		ID:          o.Id,
+		CustomerID:  o.CustomerId,
+		Status:      o.Status,
+		PaymentLink: o.PaymentLink,
+		Items:       NewItemConvertor().ClientsToEntities(o.Items),
+	}
+}
+
+func (c *OrderConvertor) EntityToClient(o *entity.Order) *client.Order {
+	c.check(o)
+	return &client.Order{
+		Id:          o.ID,
+		CustomerId:  o.CustomerID,
+		Status:      o.Status,
+		PaymentLink: o.PaymentLink,
+		Items:       NewItemConvertor().EntitiesToClients(o.Items),
+	}
+}
+
 func (c *OrderConvertor) check(o interface{}) {
 	if o == nil {
 		panic("cannot convert nil order")
@@ -51,6 +74,20 @@ func (c *ItemConvertor) EntitiesToProtos(items []*entity.Item) (res []*orderpb.I
 	return
 }
 
+func (c *ItemConvertor) ClientsToEntities(items []client.Item) (res []*entity.Item) {
+	for _, item := range items {
+		res = append(res, c.ClientToEntity(item))
+	}
+	return
+}
+
+func (c *ItemConvertor) EntitiesToClients(items []*entity.Item) (res []client.Item) {
+	for _, item := range items {
+		res = append(res, c.EntityToClient(item))
+	}
+	return
+}
+
 func (c *ItemConvertor) ProtoToEntity(item *orderpb.Item) *entity.Item {
 	return &entity.Item{
 		ID:       item.ID,
@@ -66,6 +103,24 @@ func (c *ItemConvertor) EntityToProeto(item *entity.Item) *orderpb.Item {
 		Name:     item.Name,
 		Quantity: item.Quantity,
 		PriceID:  item.PriceID,
+	}
+}
+
+func (c *ItemConvertor) ClientToEntity(item client.Item) *entity.Item {
+	return &entity.Item{
+		ID:       item.Id,
+		Name:     item.Name,
+		Quantity: item.Quantity,
+		PriceID:  item.PriceId,
+	}
+}
+
+func (c *ItemConvertor) EntityToClient(item *entity.Item) client.Item {
+	return client.Item{
+		Id:       item.ID,
+		Name:     item.Name,
+		PriceId:  item.PriceID,
+		Quantity: item.Quantity,
 	}
 }
 
@@ -93,6 +148,20 @@ func (c ItemWithQuantityConvertor) EntityToProto(item *entity.ItemWithQuantity) 
 func (c ItemWithQuantityConvertor) ProtoToEntity(item *orderpb.ItemWithQuantity) *entity.ItemWithQuantity {
 	return &entity.ItemWithQuantity{
 		ID:       item.ID,
+		Quantity: item.Quantity,
+	}
+}
+
+func (c ItemWithQuantityConvertor) ClientsToEntities(items []client.ItemWithQuantity) (res []*entity.ItemWithQuantity) {
+	for _, item := range items {
+		res = append(res, c.ClientToEntity(item))
+	}
+	return
+}
+
+func (c ItemWithQuantityConvertor) ClientToEntity(item client.ItemWithQuantity) *entity.ItemWithQuantity {
+	return &entity.ItemWithQuantity{
+		ID:       item.Id,
 		Quantity: item.Quantity,
 	}
 }

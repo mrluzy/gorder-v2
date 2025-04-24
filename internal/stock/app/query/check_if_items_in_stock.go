@@ -3,9 +3,9 @@ package query
 import (
 	"context"
 	"github.com/mrluzy/gorder-v2/common/decorator"
+	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/common/handler/redis"
 	"github.com/mrluzy/gorder-v2/common/logging"
-	"github.com/mrluzy/gorder-v2/stock/entity"
 	"github.com/pkg/errors"
 	"strings"
 	"time"
@@ -74,11 +74,7 @@ func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfIte
 		if err != nil || priceID == "" {
 			return nil, err
 		}
-		res = append(res, &entity.Item{
-			ID:       i.ID,
-			Quantity: i.Quantity,
-			PriceID:  priceID,
-		})
+		res = append(res, entity.NewItem(i.ID, "", i.Quantity, priceID))
 	}
 
 	if err := h.checkStock(ctx, query.Items); err != nil {
@@ -144,10 +140,11 @@ func (h checkIfItemsInStockHandler) checkStock(ctx context.Context, query []*ent
 			for _, e := range existing {
 				for _, q := range query {
 					if e.ID == q.ID {
-						newItems = append(newItems, &entity.ItemWithQuantity{
-							ID:       e.ID,
-							Quantity: e.Quantity - q.Quantity,
-						})
+						iq, err := entity.NewValidateItemWithQuantity(e.ID, e.Quantity-q.Quantity)
+						if err != nil {
+							return nil, err
+						}
+						newItems = append(newItems, iq)
 					}
 				}
 			}

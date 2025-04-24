@@ -2,7 +2,7 @@ package query
 
 import (
 	"context"
-	"github.com/mrluzy/gorder-v2/stock/entity"
+	"github.com/mrluzy/gorder-v2/common/entity"
 
 	"github.com/mrluzy/gorder-v2/common/decorator"
 	domain "github.com/mrluzy/gorder-v2/stock/domain/stock"
