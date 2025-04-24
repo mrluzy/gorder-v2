@@ -3,14 +3,13 @@ package adapters
 import (
 	"context"
 	_ "github.com/mrluzy/gorder-v2/common/config"
+	"github.com/mrluzy/gorder-v2/common/logging"
 	domain "github.com/mrluzy/gorder-v2/order/domain/order"
 	"github.com/mrluzy/gorder-v2/order/entity"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 var (
@@ -40,7 +39,9 @@ type orderModel struct {
 }
 
 func (r *OrderRepositoryMongo) Create(ctx context.Context, order *domain.Order) (created *domain.Order, err error) {
-	defer r.logWithTag("create", err, created)
+	_, dLog := logging.WhenRequest(ctx, "OrderRepositoryMongo.Create", map[string]interface{}{"order": order})
+	defer dLog(created, &err)
+
 	write := r.marshalToModel(order)
 	resp, err := r.Collection().InsertOne(ctx, write)
 	if err != nil {
@@ -51,22 +52,12 @@ func (r *OrderRepositoryMongo) Create(ctx context.Context, order *domain.Order) 
 	return
 }
 
-func (r *OrderRepositoryMongo) logWithTag(tag string, err error, result interface{}) {
-	l := logrus.WithFields(logrus.Fields{
-		"tag":             "order_repository_mongo",
-		"performed _time": time.Now().Unix(),
-		"err":             err,
-		"result":          result,
-	})
-	if err != nil {
-		l.Infof("%s_fail", tag)
-	} else {
-		l.Infof("%s_success", tag)
-	}
-}
-
 func (r *OrderRepositoryMongo) Get(ctx context.Context, id, customerID string) (got *domain.Order, err error) {
-	defer r.logWithTag("get", err, got)
+	_, dLog := logging.WhenRequest(ctx, "OrderRepositoryMongo.Get", map[string]interface{}{
+		"id":         id,
+		"customerID": customerID})
+	defer dLog(got, &err)
+
 	read := &orderModel{}
 	mongoID, _ := primitive.ObjectIDFromHex(id)
 	// condition
@@ -86,7 +77,9 @@ func (r *OrderRepositoryMongo) Update(
 	UpdateFn func(context.Context, *domain.Order) (*domain.Order, error),
 ) (err error) {
 
-	defer r.logWithTag("update", err, nil)
+	_, dLog := logging.WhenRequest(ctx, "OrderRepositoryMongo.Update ", map[string]interface{}{"order": order})
+	defer dLog(nil, &err)
+
 	if order == nil {
 		panic("nil order")
 	}
@@ -117,7 +110,7 @@ func (r *OrderRepositoryMongo) Update(
 		return
 	}
 	MongoID, _ := primitive.ObjectIDFromHex(oldOrder.ID)
-	res, err := r.Collection().UpdateOne(
+	_, err = r.Collection().UpdateOne(
 		ctx,
 		bson.M{"_id": MongoID, "customer_id": oldOrder.CustomerID},
 		bson.M{"$set": bson.M{
@@ -128,7 +121,6 @@ func (r *OrderRepositoryMongo) Update(
 	if err != nil {
 		return
 	}
-	r.logWithTag("finish_update", err, res)
 	return
 }
 

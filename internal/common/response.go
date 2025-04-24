@@ -9,6 +9,7 @@ import (
 )
 
 type BaseResponse struct{}
+
 type response struct {
 	Errno   int    `json:"errno"`
 	Message string `json:"message"`
@@ -32,9 +33,8 @@ func (base *BaseResponse) success(c *gin.Context, data interface{}) {
 		Data:    data,
 		TraceID: tracing.TraceID(c.Request.Context()),
 	}
-
 	resp, _ := json.Marshal(r)
-	c.Set("response", resp)
+	c.Set("response", string(resp))
 	c.JSON(http.StatusOK, r)
 }
 
@@ -46,8 +46,7 @@ func (base *BaseResponse) error(c *gin.Context, err error) {
 		Data:    nil,
 		TraceID: tracing.TraceID(c.Request.Context()),
 	}
-
 	resp, _ := json.Marshal(r)
-	c.Set("response", resp)
+	c.Set("response", string(resp))
 	c.JSON(http.StatusOK, r)
 }

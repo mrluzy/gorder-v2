@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"github.com/mrluzy/gorder-v2/common/broker"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
+	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/mrluzy/gorder-v2/payment/app"
 	"github.com/mrluzy/gorder-v2/payment/app/command"
+	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel"
@@ -42,38 +44,39 @@ func (c *Consumer) Listen(ch *amqp.Channel) {
 }
 
 func (c *Consumer) handleMessage(ch *amqp.Channel, msg amqp.Delivery, q amqp.Queue) {
-	logrus.Infof("Payment recieves a message from %s, mag: %s", q.Name, string(msg.Body))
 
-	ctx := broker.ExtractRabbitMQHeaders(context.Background(), msg.Headers)
 	t := otel.Tracer("rabbitmq")
-	_, span := t.Start(ctx, fmt.Sprintf("rabbitmq.%s.consume", q.Name))
+	ctx, span := t.Start(broker.ExtractRabbitMQHeaders(context.Background(), msg.Headers), fmt.Sprintf("rabbitmq.%s.consume", q.Name))
 	defer span.End()
+
+	logging.Infof(ctx, nil, "Payment recieves a message from %s, mag: %s", q.Name, string(msg.Body))
 
 	var err error
 	defer func() {
 		if err != nil {
+			logging.Warnf(ctx, nil, "consume failed||from=%s||message=%s||error=%+v", q.Name, msg, err)
 			_ = msg.Nack(false, false)
 		} else {
+			logging.Infof(ctx, nil, "%s", "consume success")
 			_ = msg.Ack(false)
 		}
 	}()
 
 	o := &orderpb.Order{}
-	err = json.Unmarshal(msg.Body, o)
-	if err != nil {
-		logrus.Infof("Failed to unmarshal msg:%s to order, err:%v", string(msg.Body), err)
+
+	if err = json.Unmarshal(msg.Body, o); err != nil {
+		err = errors.Wrap(err, "failed to unmarshal msg to order")
+
 		return
 	}
 
-	if _, err := c.app.Commands.CreatePayment.Handle(ctx, command.CreatePayment{Order: o}); err != nil {
-		logrus.Infof("Failed to create payment, err:%v", err)
-		if err := broker.HandleRetry(ctx, ch, &msg); err != nil {
-			logrus.Warnf("retry_error,  error handle retry, messageID = %s, err = %v", msg.MessageId, err)
+	if _, err = c.app.Commands.CreatePayment.Handle(ctx, command.CreatePayment{Order: o}); err != nil {
+		err = errors.Wrap(err, "failed to create payment")
+		if err = broker.HandleRetry(ctx, ch, &msg); err != nil {
+			err = errors.Wrapf(err, "retry_error,  error handle retry||messageID = %s||err = %v", msg.MessageId, err)
 		}
 		return
 	}
 
 	span.AddEvent("payment.created")
-	logrus.Infof("consume succcessfully")
-
 }

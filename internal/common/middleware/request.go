@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/sirupsen/logrus"
 	"io"
 	"time"
@@ -19,27 +20,25 @@ func RequestLog(l *logrus.Entry) gin.HandlerFunc {
 
 func requestOut(c *gin.Context, l *logrus.Entry) {
 	response, _ := c.Get("response")
-	var unMarshalledResp interface{}
-	_ = json.Unmarshal(response.([]byte), &unMarshalledResp)
-	start, _ := c.Get("start_time")
+	start, _ := c.Get("request_start")
 	startTime := start.(time.Time)
 	l.WithContext(c.Request.Context()).WithFields(logrus.Fields{
-		"proc_time_ms": time.Since(startTime).Milliseconds(),
-		"response":     unMarshalledResp,
-	}).Info("__request_out")
+		logging.Cost:     time.Since(startTime).Milliseconds(),
+		logging.Response: response,
+	}).Info("_request_out")
 }
 
 func requestIn(c *gin.Context, l *logrus.Entry) {
-	c.Set("start_time", time.Now())
+	c.Set("request_start", time.Now())
 	body := c.Request.Body
 	bodyBytes, _ := io.ReadAll(body)
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-	var jsonCompact bytes.Buffer
-	_ = json.Compact(&jsonCompact, bodyBytes)
+	c.Request.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+	var compactJson bytes.Buffer
+	_ = json.Compact(&compactJson, bodyBytes)
 	l.WithContext(c.Request.Context()).WithFields(logrus.Fields{
-		"start": time.Now().Unix(),
-		"args":  jsonCompact.String(),
-		"from":  c.RemoteIP(),
-		"uri":   c.Request.RequestURI,
-	}).Info("__request_in")
+		"start":      time.Now().Unix(),
+		logging.Args: compactJson.String(),
+		"from":       c.RemoteIP(),
+		"uri":        c.Request.RequestURI,
+	}).Info("_request_in")
 }
