@@ -36,7 +36,7 @@ func main() {
 	}()
 
 	application := service.NewApplication(ctx)
-
+	// 将grpc sever注册到consul
 	deregisterFn, err := discovery.RegisterToConsul(ctx, serviceName)
 	if err != nil {
 		logrus.Fatal(err)

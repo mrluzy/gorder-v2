@@ -13,7 +13,6 @@ import (
 )
 
 func NewApplication(_ context.Context) app.Application {
-	//stockRepo := adapters.NewMemoryStockRepository()
 	db := persistent.NewMySQL()
 	stockRepo := adapters.NewMySQLStockRepository(db)
 	logger := logrus.NewEntry(logrus.StandardLogger())

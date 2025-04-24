@@ -22,6 +22,7 @@ import (
 )
 
 func NewApplication(ctx context.Context) (app.Application, func()) {
+	// 创建stockGRPC客户端，
 	stockClient, closeStockClient, err := grpcClient.NewStockGRPCClient(ctx)
 	if err != nil {
 		panic(err)
