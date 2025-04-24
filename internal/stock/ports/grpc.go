@@ -2,12 +2,11 @@ package ports
 
 import (
 	"context"
+	"github.com/mrluzy/gorder-v2/common/convertor"
 	"github.com/mrluzy/gorder-v2/common/tracing"
-	"github.com/mrluzy/gorder-v2/stock/convertor"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
 	"github.com/mrluzy/gorder-v2/stock/app"
 	"github.com/mrluzy/gorder-v2/stock/app/query"
 )

@@ -2,7 +2,7 @@ package adapters
 
 import (
 	"context"
-	"github.com/mrluzy/gorder-v2/stock/entity"
+	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/stock/infrastructure/persistent"
 	"github.com/mrluzy/gorder-v2/stock/infrastructure/persistent/builder"
 	"github.com/pkg/errors"

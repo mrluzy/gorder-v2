@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
@@ -11,8 +12,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mrluzy/gorder-v2/common/broker"
-	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
-	"github.com/mrluzy/gorder-v2/payment/domain"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -73,7 +72,7 @@ func (h *PaymentHandler) handleWebhook(c *gin.Context) {
 
 		if session.PaymentStatus == stripe.CheckoutSessionPaymentStatusPaid {
 
-			var items []*orderpb.Item
+			var items []*entity.Item
 			_ = json.Unmarshal([]byte(session.Metadata["items"]), &items)
 
 			tr := otel.Tracer("rabbitmq")
@@ -85,13 +84,13 @@ func (h *PaymentHandler) handleWebhook(c *gin.Context) {
 				Routing:  broker.FanOut,
 				Queue:    "",
 				Exchange: broker.EventOrderPaid,
-				Body: &domain.Order{
-					ID:          session.Metadata["orderID"],
-					CustomerID:  session.Metadata["customerID"],
-					Status:      string(stripe.CheckoutSessionPaymentStatusPaid),
-					PaymentLink: session.Metadata["paymentLink"],
-					Items:       items,
-				},
+				Body: entity.NewOrder(
+					session.Metadata["orderID"],
+					session.Metadata["customerID"],
+					string(stripe.CheckoutSessionPaymentStatusPaid),
+					session.Metadata["paymentLink"],
+					items,
+				),
 			})
 		}
 	}
