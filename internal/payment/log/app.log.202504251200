@@ -1,4 +1,0 @@
-{"level":"info","msg":"waiting for order grpc client, timeout: 10 seconds","time":"2025-04-25 12:00:30"}
-{"level":"info","msg":"Discovered 1 instance of order address from consul, addrs:[127.0.0.1:5002]","time":"2025-04-25 12:00:30"}
-{"level":"info","msg":"waiting for order grpc client, timeout: 10 seconds","time":"2025-04-25 12:01:13"}
-{"level":"info","msg":"Discovered 1 instance of order address from consul, addrs:[127.0.0.1:5002]","time":"2025-04-25 12:01:13"}

@@ -1,7 +1,0 @@
-{"message":"waiting for order grpc client, timeout: 10 seconds","severity":"info","time":"2025-04-25T14:06:24+08:00"}
-{"message":"Discovered 1 instance of order address from consul, addrs:[127.0.0.1:5002]","severity":"info","time":"2025-04-25T14:06:24+08:00"}
-{"message":"to exit, press Ctrl+C","severity":"info","time":"2025-04-25T14:06:24+08:00"}
-{"message":"cooking order:680b2663fdd4ab205e8b9fb3","severity":"info","time":"2025-04-25T14:06:46+08:00","trace":"36f66dbf585c5d0fc53d0245857df3d6"}
-{"message":"order:680b2663fdd4ab205e8b9fb3 done!","severity":"info","time":"2025-04-25T14:06:51+08:00","trace":"36f66dbf585c5d0fc53d0245857df3d6"}
-{"message":"consume succcessfully","severity":"info","time":"2025-04-25T14:06:51+08:00"}
-{"message":"consume success","severity":"info","time":"2025-04-25T14:06:51+08:00","trace":"36f66dbf585c5d0fc53d0245857df3d6"}
