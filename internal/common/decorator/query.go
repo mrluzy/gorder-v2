@@ -14,7 +14,7 @@ type QueryHandler[Q, R any] interface {
 
 func ApplyQueryDecorators[H, R any](
 	handler QueryHandler[H, R],
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricsClient MetricsClient) QueryHandler[H, R] {
 	return queryLoggingDecorator[H, R]{
 		logger: logger,

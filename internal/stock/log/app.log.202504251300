@@ -1,0 +1,6 @@
+{"grpcAddr":"127.0.0.1:5003","level":"info","msg":"registered to consul","serviceName":"stock","time":"2025-04-25 13:42:17"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5003","time":"2025-04-25 13:42:17"}
+{"grpcAddr":"127.0.0.1:5003","level":"info","msg":"registered to consul","serviceName":"stock","time":"2025-04-25 13:43:39"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5003","time":"2025-04-25 13:43:39"}
+{"grpcAddr":"127.0.0.1:5003","level":"info","msg":"registered to consul","serviceName":"stock","time":"2025-04-25 13:43:50"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5003","time":"2025-04-25 13:43:50"}

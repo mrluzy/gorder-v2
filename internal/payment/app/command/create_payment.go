@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"github.com/mrluzy/gorder-v2/common/consts"
 	"github.com/mrluzy/gorder-v2/common/convertor"
 	"github.com/mrluzy/gorder-v2/common/decorator"
 	"github.com/mrluzy/gorder-v2/common/entity"
@@ -30,10 +31,10 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 		return "", err
 	}
 
-	newOrder, err := entity.NewValidateOrder(
+	newOrder, err := entity.NewValidOrder(
 		cmd.Order.ID,
 		cmd.Order.CustomerID,
-		"waiting_for_payment",
+		consts.OrderStatusWaitingForPayment,
 		link,
 		cmd.Order.Items,
 	)
@@ -47,7 +48,7 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 func NewCreatePaymentHandler(
 	processor domain.Processor,
 	orderGRPC OrderService,
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricClient decorator.MetricsClient,
 ) CreatePaymentHandler {
 	return decorator.ApplyCommandDecorators[CreatePayment, string](

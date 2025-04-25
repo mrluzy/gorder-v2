@@ -1,0 +1,16 @@
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 12:13:00"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 12:13:00"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 12:13:00"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 12:13:00"}
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 12:19:09"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 12:19:09"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 12:19:09"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 12:19:09"}
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 12:19:52"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 12:19:52"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 12:19:52"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 12:19:52"}
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 12:20:28"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 12:20:28"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 12:20:28"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 12:20:28"}

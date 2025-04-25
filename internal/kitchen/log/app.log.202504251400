@@ -1,0 +1,7 @@
+{"level":"info","msg":"waiting for order grpc client, timeout: 10 seconds","time":"2025-04-25 14:06:24"}
+{"level":"info","msg":"Discovered 1 instance of order address from consul, addrs:[127.0.0.1:5002]","time":"2025-04-25 14:06:24"}
+{"level":"info","msg":"to exit, press Ctrl+C","time":"2025-04-25 14:06:24"}
+{"level":"info","msg":"cooking order:680b2663fdd4ab205e8b9fb3","time":"2025-04-25 14:06:46"}
+{"level":"info","msg":"order:680b2663fdd4ab205e8b9fb3 done!","time":"2025-04-25 14:06:51"}
+{"level":"info","msg":"consume succcessfully","time":"2025-04-25 14:06:51"}
+{"level":"info","msg":"consume success","time":"2025-04-25 14:06:51"}

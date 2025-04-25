@@ -33,7 +33,7 @@ type checkIfItemsInStockHandler struct {
 func NewCheckIfItemsInStockHandler(
 	stockRepo domain.Repository,
 	stripeAPI *integration.StripeAPI,
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricClient decorator.MetricsClient,
 ) CheckIfItemsInStockHandler {
 	if stockRepo == nil {
@@ -68,13 +68,27 @@ func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfIte
 		}
 	}()
 
+	var err error
 	var res []*entity.Item
+	defer func() {
+		f := logrus.Fields{
+			"query": query,
+			"res":   res,
+		}
+		if err != nil {
+			logging.Errorf(ctx, f, "checkIfItemsInStockHandler err = %v", err)
+		} else {
+			logging.Infof(ctx, nil, "checkIfItemsInStockHandler = ok")
+		}
+
+	}()
+
 	for _, i := range query.Items {
-		priceID, err := h.stripeAPI.GetPriceByProductID(ctx, i.ID)
-		if err != nil || priceID == "" {
+		p, err := h.stripeAPI.GetProductByID(ctx, i.ID)
+		if err != nil {
 			return nil, err
 		}
-		res = append(res, entity.NewItem(i.ID, "", i.Quantity, priceID))
+		res = append(res, entity.NewItem(i.ID, p.Name, i.Quantity, p.DefaultPrice.ID))
 	}
 
 	if err := h.checkStock(ctx, query.Items); err != nil {
@@ -140,7 +154,7 @@ func (h checkIfItemsInStockHandler) checkStock(ctx context.Context, query []*ent
 			for _, e := range existing {
 				for _, q := range query {
 					if e.ID == q.ID {
-						iq, err := entity.NewValidateItemWithQuantity(e.ID, e.Quantity-q.Quantity)
+						iq, err := entity.NewValidItemWithQuantity(e.ID, e.Quantity-q.Quantity)
 						if err != nil {
 							return nil, err
 						}

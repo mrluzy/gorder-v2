@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mrluzy/gorder-v2/common/consts"
 	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/common/logging"
 	"github.com/pkg/errors"
@@ -75,7 +76,7 @@ func (h *PaymentHandler) handleWebhook(c *gin.Context) {
 			var items []*entity.Item
 			_ = json.Unmarshal([]byte(session.Metadata["items"]), &items)
 
-			tr := otel.Tracer("rabbitmq")
+			tr := otel.Tracer("rabbi tmq")
 			ctx, span := tr.Start(c.Request.Context(), fmt.Sprintf("rabbitmq.%s.publish", broker.EventOrderCreated))
 			defer span.End()
 
@@ -87,7 +88,7 @@ func (h *PaymentHandler) handleWebhook(c *gin.Context) {
 				Body: entity.NewOrder(
 					session.Metadata["orderID"],
 					session.Metadata["customerID"],
-					string(stripe.CheckoutSessionPaymentStatusPaid),
+					consts.OrderStatusPaid,
 					session.Metadata["paymentLink"],
 					items,
 				),

@@ -3,6 +3,7 @@ package ports
 import (
 	"context"
 	"github.com/mrluzy/gorder-v2/common/convertor"
+	"github.com/mrluzy/gorder-v2/common/genproto/stockpb"
 	"github.com/mrluzy/gorder-v2/common/tracing"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

@@ -71,6 +71,7 @@ func (r *OrderRepositoryMongo) Get(ctx context.Context, id, customerID string) (
 	return r.unmarshal(read), nil
 }
 
+// Update 先查找对应的order，然后应用updateFn，然后将更新过的order写回去
 func (r *OrderRepositoryMongo) Update(
 	ctx context.Context,
 	order *domain.Order,
@@ -105,7 +106,7 @@ func (r *OrderRepositoryMongo) Update(
 	if err != nil {
 		return
 	}
-	updated, err := UpdateFn(ctx, order)
+	updated, err := UpdateFn(ctx, oldOrder)
 	if err != nil {
 		return
 	}

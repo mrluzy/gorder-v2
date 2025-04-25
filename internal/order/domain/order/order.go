@@ -2,10 +2,11 @@ package order
 
 import (
 	"fmt"
+	"github.com/mrluzy/gorder-v2/common/consts"
 	"github.com/mrluzy/gorder-v2/common/entity"
+	"slices"
 
 	"github.com/pkg/errors"
-	"github.com/stripe/stripe-go/v82"
 )
 
 // aggregate
@@ -15,6 +16,19 @@ type Order struct {
 	Status      string
 	PaymentLink string
 	Items       []*entity.Item
+}
+
+func (o *Order) isValidStatus(to string) bool {
+	switch o.Status {
+	case consts.OrderStatusPending:
+		return slices.Contains([]string{consts.OrderStatusWaitingForPayment}, to)
+	case consts.OrderStatusWaitingForPayment:
+		return slices.Contains([]string{consts.OrderStatusPaid}, to)
+	case consts.OrderStatusPaid:
+		return slices.Contains([]string{consts.OrderStatusReady}, to)
+	default:
+		return false
+	}
 }
 
 func NewOrder(ID string, customerID string, status string, paymentLink string, items []*entity.Item) (*Order, error) {
@@ -41,11 +55,26 @@ func NewPendingOrder(customerID string, items []*entity.Item) (*Order, error) {
 	if items == nil {
 		return nil, errors.New("empty items")
 	}
-	return &Order{CustomerID: customerID, Status: "pending", Items: items}, nil
+	return &Order{CustomerID: customerID, Status: consts.OrderStatusPending, Items: items}, nil
 }
-func (o *Order) IsPaid() error {
-	if o.Status == string(stripe.CheckoutSessionPaymentStatusPaid) {
-		return nil
+
+func (o *Order) UpdateStatus(to string) error {
+	if !o.isValidStatus(to) {
+		return fmt.Errorf("cannot transmit to invalid status: %s", to)
 	}
-	return fmt.Errorf("order status not paid, order id = %s, status = %s", o.ID, o.Status)
+	o.Status = to
+	return nil
+}
+
+func (o *Order) UpdatePaymentLink(link string) error {
+	//if link == "" {
+	//	return errors.New("empty payment link")
+	//}
+	o.PaymentLink = link
+	return nil
+}
+
+func (o *Order) UpdateItems(res []*entity.Item) error {
+	o.Items = res
+	return nil
 }

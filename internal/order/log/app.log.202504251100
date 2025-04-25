@@ -1,0 +1,37 @@
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 11:21:53"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 11:21:53"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 11:21:53"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 11:21:53"}
+{"args":"{\"customer_id\":\"1234\",\"items\":[{\"id\":\"prod_S8Kcs4H65OdCxg\",\"quantity\":1}]}","from":"127.0.0.1","level":"info","msg":"_request_in","start":1745551361,"time":"2025-04-25 11:22:41","uri":"/api/customer/%7BCustomerID%7D/order?CustomerID=1234"}
+{"command":"CreateOrder","command_body":"{\"CustomerID\":\"1234\",\"Items\":[{\"ID\":\"prod_S8Kcs4H65OdCxg\",\"Quantity\":1}]}","level":"debug","msg":"Executing command","time":"2025-04-25 11:22:41"}
+{"cmd":{"CustomerID":"1234","Items":[{"ID":"prod_S8Kcs4H65OdCxg","Quantity":1}]},"level":"info","msg":"CreateOrderHandler_command_execute_success","time":"2025-04-25 11:22:42"}
+{"cost_ms":905,"level":"info","msg":"_request_out","response":"{\"errno\":1,\"message\":\"unknown error\",\"data\":null,\"trace_id\":\"8b0b3cadcaa443e3ea0191c1264ae729\"}","time":"2025-04-25 11:22:42"}
+{"args":"{\"customer_id\":\"1234\",\"items\":[{\"id\":\"prod_S8Kcs4H65OdCxg\",\"quantity\":1}]}","from":"127.0.0.1","level":"info","msg":"_request_in","start":1745552459,"time":"2025-04-25 11:40:59","uri":"/api/customer/%7BCustomerID%7D/order?CustomerID=1234"}
+{"command":"CreateOrder","command_body":"{\"CustomerID\":\"1234\",\"Items\":[{\"ID\":\"prod_S8Kcs4H65OdCxg\",\"Quantity\":1}]}","level":"debug","msg":"Executing command","time":"2025-04-25 11:40:59"}
+{"cmd":{"CustomerID":"1234","Items":[{"ID":"prod_S8Kcs4H65OdCxg","Quantity":1}]},"level":"info","msg":"CreateOrderHandler_command_execute_success","time":"2025-04-25 11:41:09"}
+{"cost_ms":9544,"level":"info","msg":"_request_out","response":"{\"errno\":1,\"message\":\"unknown error\",\"data\":null,\"trace_id\":\"e35580c91ab0fdcc9f0691e15eed67b0\"}","time":"2025-04-25 11:41:09"}
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 11:41:43"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 11:41:47"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 11:41:47"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 11:41:47"}
+{"args":"{\"customer_id\":\"1234\",\"items\":[{\"id\":\"prod_S8Kcs4H65OdCxg\",\"quantity\":1}]}","from":"127.0.0.1","level":"info","msg":"_request_in","start":1745552538,"time":"2025-04-25 11:42:18","uri":"/api/customer/%7BCustomerID%7D/order?CustomerID=1234"}
+{"cmd":{"CustomerID":"1234","Items":[{"ID":"prod_S8Kcs4H65OdCxg","Quantity":1}]},"level":"info","msg":"CreateOrderHandler_command_execute_success","time":"2025-04-25 11:42:29"}
+{"cost_ms":11128,"level":"info","msg":"_request_out","response":"{\"errno\":1,\"message\":\"unknown error\",\"data\":null,\"trace_id\":\"3304d8d2035505983050b1ea2f8f0bc2\"}","time":"2025-04-25 11:42:29"}
+{"args":"{\"customer_id\":\"1234\",\"items\":[{\"id\":\"prod_S8Kcs4H65OdCxg\",\"quantity\":1}]}","from":"127.0.0.1","level":"info","msg":"_request_in","start":1745552590,"time":"2025-04-25 11:43:10","uri":"/api/customer/%7BCustomerID%7D/order?CustomerID=1234"}
+{"cmd":{"CustomerID":"1234","Items":[{"ID":"prod_S8Kcs4H65OdCxg","Quantity":1}]},"level":"info","msg":"CreateOrderHandler_command_execute_success","time":"2025-04-25 11:43:21"}
+{"cost_ms":10902,"level":"info","msg":"_request_out","response":"{\"errno\":1,\"message\":\"unknown error\",\"data\":null,\"trace_id\":\"4ee6db6b3a03f15a0661690b5803e809\"}","time":"2025-04-25 11:43:21"}
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 11:46:30"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 11:46:30"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 11:46:30"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 11:46:30"}
+{"args":"{\"customer_id\":\"1234\",\"items\":[{\"id\":\"prod_S8Kcs4H65OdCxg\",\"quantity\":1}]}","from":"127.0.0.1","level":"info","msg":"_request_in","start":1745552801,"time":"2025-04-25 11:46:41","uri":"/api/customer/%7BCustomerID%7D/order?CustomerID=1234"}
+{"args":"[{\"ID\":\"prod_S8Kcs4H65OdCxg\",\"Quantity\":1}]","cost_ms":621,"level":"info","method":"StockGRPC.CheckIfItemsInStock","msg":"_request_success","response":null,"time":"2025-04-25 11:46:42"}
+{"args":"{\"order\":{\"ID\":\"\",\"CustomerID\":\"1234\",\"Status\":\"pending\",\"PaymentLink\":\"\",\"Items\":[{\"ID\":\"prod_S8Kcs4H65OdCxg\",\"Name\":\"\",\"Quantity\":1,\"PriceID\":\"price_1RE3xECQIkU5HEs5mCwUNKQ5\"}]}}","cost_ms":6,"level":"info","method":"OrderRepositoryMongo.Create","msg":"_request_success","response":null,"time":"2025-04-25 11:46:42"}
+{"args":"{\"Channel\":{},\"Routing\":\"direct\",\"Queue\":\"order.created\",\"Exchange\":\"\",\"Body\":{\"ID\":\"680b05a292f9b2a262461a19\",\"CustomerID\":\"1234\",\"Status\":\"pending\",\"PaymentLink\":\"\",\"Items\":[{\"ID\":\"prod_S8Kcs4H65OdCxg\",\"Name\":\"\",\"Quantity\":1,\"PriceID\":\"price_1RE3xECQIkU5HEs5mCwUNKQ5\"}]}}","cost_ms":1,"level":"info","msg":"_mq_publish_success","response":null,"time":"2025-04-25 11:46:42"}
+{"cmd":{"CustomerID":"1234","Items":[{"ID":"prod_S8Kcs4H65OdCxg","Quantity":1}]},"level":"info","msg":"CreateOrderHandler_command_execute_success","time":"2025-04-25 11:46:42"}
+{"command":"CreateOrder","command_body":"{\"CustomerID\":\"1234\",\"Items\":[{\"ID\":\"prod_S8Kcs4H65OdCxg\",\"Quantity\":1}]}","level":"info","msg":"Query executed successfully","time":"2025-04-25 11:46:42"}
+{"cost_ms":631,"level":"info","msg":"_request_out","response":"{\"errno\":0,\"message\":\"success\",\"data\":{\"customer_id\":\"1234\",\"order_id\":\"680b05a292f9b2a262461a19\",\"redirect_url\":\"http://localhost:8282/success?customerID=1234\\u0026orderID=680b05a292f9b2a262461a19\"},\"trace_id\":\"f1e8e9c2646dfd1db5f8ab5a33f615f5\"}","time":"2025-04-25 11:46:42"}
+{"level":"info","msg":"waiting for stock grpc client, timeout: 10 seconds","time":"2025-04-25 11:58:42"}
+{"level":"info","msg":"Discovered 1 instance of stock address from consul, addrs:[127.0.0.1:5003]","time":"2025-04-25 11:58:42"}
+{"grpcAddr":"127.0.0.1:5002","level":"info","msg":"registered to consul","serviceName":"order","time":"2025-04-25 11:58:42"}
+{"level":"info","msg":"staring grpc server, listening on 127.0.0.1:5002","time":"2025-04-25 11:58:42"}

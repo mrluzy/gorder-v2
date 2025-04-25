@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mrluzy/gorder-v2/common/broker"
+	"github.com/mrluzy/gorder-v2/common/consts"
 	"github.com/mrluzy/gorder-v2/common/convertor"
 	"github.com/mrluzy/gorder-v2/common/entity"
 	"github.com/mrluzy/gorder-v2/common/genproto/orderpb"
@@ -84,7 +85,7 @@ func (c *Consumer) handleMessage(ch *amqp.Channel, msg amqp.Delivery, q amqp.Que
 	if err = c.orderGRPC.UpdateOrder(ctx, &orderpb.Order{
 		ID:          o.ID,
 		CustomerID:  o.CustomerID,
-		Status:      "ready",
+		Status:      consts.OrderStatusReady,
 		Items:       convertor.NewItemConvertor().EntitiesToProtos(o.Items),
 		PaymentLink: o.PaymentLink,
 	}); err != nil {

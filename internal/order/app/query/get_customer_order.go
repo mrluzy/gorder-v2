@@ -18,11 +18,7 @@ type getCustomerOrderHandler struct {
 	orderRepo domain.Repository
 }
 
-func NewGetCustomerOrderHandler(
-	orderRepo domain.Repository,
-	logger *logrus.Entry,
-	metricClient decorator.MetricsClient,
-) GetCustomerOrderHandler {
+func NewGetCustomerOrderHandler(orderRepo domain.Repository, logger *logrus.Logger, metricClient decorator.MetricsClient) GetCustomerOrderHandler {
 	if orderRepo == nil {
 		panic("orderRepo is nil")
 	}

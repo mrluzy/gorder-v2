@@ -15,14 +15,13 @@ import (
 func NewApplication(_ context.Context) app.Application {
 	db := persistent.NewMySQL()
 	stockRepo := adapters.NewMySQLStockRepository(db)
-	logger := logrus.NewEntry(logrus.StandardLogger())
 	stripeAPI := integration.NewStripeAPI()
 	metricsClient := metrics.TodoMetrics{}
 	return app.Application{
 		Commands: app.Commands{},
 		Queries: app.Queries{
-			CheckIfItemsInStock: query.NewCheckIfItemsInStockHandler(stockRepo, stripeAPI, logger, metricsClient),
-			GetItems:            query.NewGetItemsHandler(stockRepo, logger, metricsClient),
+			CheckIfItemsInStock: query.NewCheckIfItemsInStockHandler(stockRepo, stripeAPI, logrus.StandardLogger(), metricsClient),
+			GetItems:            query.NewGetItemsHandler(stockRepo, logrus.StandardLogger(), metricsClient),
 		},
 	}
 
