@@ -9,8 +9,10 @@ import (
 	"time"
 )
 
+// SetNX 执行 Redis 的 SETNX 操作。如果 key 不存在，则设置该 key 的值为 value，并为该 key 设置一个 TTL（过期时间）
 func SetNX(ctx context.Context, client *redis.Client, key, value string, ttl time.Duration) (err error) {
 	now := time.Now()
+	// 打印日志
 	defer func() {
 		l := logrus.WithContext(ctx).WithFields(logrus.Fields{
 			"start":       now,
@@ -25,6 +27,7 @@ func SetNX(ctx context.Context, client *redis.Client, key, value string, ttl tim
 			l.Warn("_redis_setnx_error")
 		}
 	}()
+
 	if client == nil {
 		return errors.New("redis client is nil")
 	}

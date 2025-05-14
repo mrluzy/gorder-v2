@@ -32,6 +32,7 @@ func Client(name string) *redis.Client {
 	return singleton.Get(name).(*redis.Client)
 }
 
+// 通过配置文件创建redis连接池
 func supplier(key string) any {
 	confKey := confName + "." + key
 	type Section struct {

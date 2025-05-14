@@ -21,7 +21,6 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 		panic(err)
 	}
 	orderGRPC := adapters.NewOrderGRPC(orderClient)
-	//memoryProcessor := processor.NewInmemProcessor()
 	stripeProcessor := processor.NewStripeProcessor(viper.GetString("stripe-key"))
 	return newApplication(ctx, orderGRPC, stripeProcessor), func() {
 		_ = closeOrderClient()

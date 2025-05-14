@@ -73,6 +73,7 @@ func directQueue(ctx context.Context, req PublishEventReq) (err error) {
 }
 
 func doPublish(ctx context.Context, ch *amqp.Channel, exchange, key string, mandatory bool, immediate bool, msg amqp.Publishing) error {
+	// key就是队列的名字
 	if err := ch.PublishWithContext(ctx, exchange, key, mandatory, immediate, msg); err != nil {
 		logging.Warnf(ctx, nil, "_publishing_event_failed||exchange=%s||key=%s||msg=%v", exchange, key, msg)
 		return errors.Wrap(err, "publish event error")

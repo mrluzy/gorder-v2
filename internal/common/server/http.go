@@ -18,7 +18,7 @@ func RunHTTPServer(serverName string, wrapper func(router *gin.Engine)) {
 
 func runHTTPServerOnAddr(addr string, wrapper func(router *gin.Engine)) {
 	apiRouter := gin.New()
-	serMiddlewares(apiRouter)
+	setMiddlewares(apiRouter)
 	wrapper(apiRouter)
 	apiRouter.Group("/api")
 	if err := apiRouter.Run(addr); err != nil {
@@ -26,7 +26,7 @@ func runHTTPServerOnAddr(addr string, wrapper func(router *gin.Engine)) {
 	}
 }
 
-func serMiddlewares(r *gin.Engine) {
+func setMiddlewares(r *gin.Engine) {
 	r.Use(middleware.StructuredLog(logrus.NewEntry(logrus.StandardLogger())))
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestLog(logrus.NewEntry(logrus.StandardLogger())))

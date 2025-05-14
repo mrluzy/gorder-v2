@@ -64,7 +64,7 @@ func (m MySQLStockRepository) updateOptimistic(
 	ctx context.Context,
 	tx *gorm.DB,
 	data []*entity.ItemWithQuantity,
-	updateFn func(ctx context.Context, existing []*entity.ItemWithQuantity,
+	_ func(ctx context.Context, existing []*entity.ItemWithQuantity,
 		query []*entity.ItemWithQuantity) ([]*entity.ItemWithQuantity, error)) error {
 
 	for _, queryData := range data {
